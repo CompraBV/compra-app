@@ -1,17 +1,39 @@
 package nl.compra.compraapp;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 
 public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        // enables the activity icon as a 'home' button. required if "android:targetSdkVersion" > 14
+//        getActionBar().setHomeButtonEnabled(true);
+
         setContentView(R.layout.activity_main);
+
+        Context context = getApplicationContext();
+        CharSequence text = "Welcome back to the Compra App!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+
+        toast.show();
+
     }
 
     @Override
@@ -32,6 +54,14 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+
+        if (id == R.id.action_login)
+        {
+
+
+
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

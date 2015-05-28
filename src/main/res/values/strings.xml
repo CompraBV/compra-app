@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">CompraApp</string>
+    <string name="app_name">Compra App</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Menu</string>
+    <string name="action_login">Login</string>
 </resources>
