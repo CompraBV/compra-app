@@ -1,7 +1,26 @@
 <resources>
+
     <string name="app_name">Compra App</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Menu</string>
     <string name="action_login">Login</string>
+
+    <string-array name="catagories">
+        <item>Alle domeinen</item>
+        <item>Populair</item>
+        <item>Nieuw</item>
+        <item>Europa</item>
+        <item>Landen</item>
+        <item>Algemeen</item>
+        <item>Aanbiedingen</item>
+    </string-array>
+
+    <string-array name="sort">
+        <item>Prijs oplopend</item>
+        <item>Prijs aflopend</item>
+        <item>Alfabetisch oplopend</item>
+        <item>Alfabetisch aflopend</item>
+    </string-array>
+
 </resources>
