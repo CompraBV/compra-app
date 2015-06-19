@@ -3,27 +3,31 @@ package nl.compra.compraapp;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.JsonReader;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class MainActivity extends ActionBarActivity {
+
+    HashMap <String, Double> domainList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,28 +66,64 @@ public class MainActivity extends ActionBarActivity {
         // Apply the adapter to the spinner
         spinnerSorteringen.setAdapter(adapterrrrrrrrrrr);
 
-        addDomainToTable();
+        intializeDomains();
 
     }
 
-    public void addDomainToTable ()
+    public void intializeDomains ()
     {
-
-        TableLayout placeHolder = (TableLayout) findViewById(R.id.domainRowsTable);
-        getLayoutInflater().inflate(R.layout.domain_row, placeHolder);
 
         try
         {
 
+            ///////////////////////////////
+            // UNTESTED CODE BEGINS HERE //
+            ///////////////////////////////
+
             String url = "https://www.compra.nl/?c=api&m=getExtensions";
             JSONObject jsonObject = new JSONObject (url);
-            System.out.println ("JSON OPJECT WOOO");
-//            System.out.println ("WASD WASD WTF I CAN'T MOVE");
-//            System.out.println (jsonObject);
+            JSONArray jsonArray = jsonObject.getJSONArray ("items");
 
-//        } catch (java.io.IOException e) {
-//
-//            e.printStackTrace();
+            domainList = new HashMap <String, Double>();
+            for
+            (
+                int i = 0;
+                i < jsonArray.length ();
+                i++
+            )
+            {
+
+                // Create the JSON data object
+                JSONObject domainObj = jsonArray.getJSONObject (i);
+                String domain   = domainObj.getString("tld");
+                double price    = domainObj.getDouble("price_per_year");
+
+                domainList.put (domain, price);
+
+            }
+
+            // Iterates through all found domains
+            Iterator <Map.Entry<String, Double>> domainListIterator = domainList.entrySet().iterator();
+            while (domainListIterator.hasNext ())
+            {
+
+                // Get the next entry
+                Map.Entry domainListIt = domainListIterator.next ();
+
+                // Add a new domain_row
+                TableLayout placeHolder = (TableLayout) findViewById(R.id.domainRowsTable);
+                getLayoutInflater().inflate(R.layout.domain_row, placeHolder);
+
+                // Attempt to change the text of the domain_row layout to the corresponding domain
+                TextView domeinRowText = (TextView) placeHolder.findViewById(R.id.domeinRowText);
+                domeinRowText.setText ((CharSequence) domainListIt.getKey ());
+
+            }
+
+            /////////////////////////////
+            // UNTESTED CODE ENDS HERE //
+            /////////////////////////////
+
 
         } catch (JSONException e) {
             e.printStackTrace();
