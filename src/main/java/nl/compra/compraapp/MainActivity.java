@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -33,7 +34,7 @@ import java.util.Map;
 public class MainActivity extends ActionBarActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate (Bundle savedInstanceState) {
 
         super.onCreate (savedInstanceState);
 
@@ -41,31 +42,29 @@ public class MainActivity extends ActionBarActivity {
 
 
         // Start CompraApiAdapter thread to load all domains
-        new ExtensionInitializor ().execute ();
+        new ExtensionInitializer ().execute ();
 
-        Context context = getApplicationContext();
+        Context context = getApplicationContext ();
         CharSequence text = "Welcome back to the Compra App!";
         int duration = Toast.LENGTH_SHORT;
 
-        Toast toast = Toast.makeText(context, text, duration);
+        Toast toast = Toast.makeText (context, text, duration);
 
-        toast.show();
+        toast.show ();
 
         // Creates the spinners
 
-        Spinner spinnerDomeinen = (Spinner) findViewById(R.id.domeinen);
+        Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.catagories, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource (this, R.array.catagories, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinnerDomeinen.setAdapter(adapter);
+        spinnerDomeinen.setAdapter (adapter);
 
-        Spinner spinnerSorteringen = (Spinner) findViewById(R.id.sorteringen);
+        Spinner spinnerSorteringen = (Spinner) findViewById (R.id.sorteringen);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapterrrrrrrrrrr = ArrayAdapter.createFromResource(this,
-                R.array.sort, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapterrrrrrrrrrr = ArrayAdapter.createFromResource (this, R.array.sort, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapterrrrrrrrrrr.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -74,27 +73,25 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu (Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate (R.menu.menu_main, menu);
+        getMenuInflater ().inflate (R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected (MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        int id = item.getItemId ();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
-        if (id == R.id.action_login)
-        {
-
+        if (id == R.id.action_login) {
 
 
         }
@@ -103,31 +100,60 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected (item);
     }
 
-    public class ExtensionInitializor extends AsyncTask <String, String, String>
+    public void searchByDomain (View view)
     {
+
+        Log.d ("Bob", "User is searching by domain.");
+
+        EditText searchField = (EditText) findViewById (R.id.searchEditText);
+        String domain = searchField.getText ().toString ();
+
+        new ExtensionSearchOnDomain ().execute (domain);
+
+    }
+
+    // This code was copied from the internet.
+    // Source: http://stackoverflow.com/questions/8616781/how-to-get-a-web-pages-source-code-from-java
+    private String getUrlSource (String url) throws IOException {
+
+        URL custUrl = null;
+        try {
+            custUrl = new URL (url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace ();
+        }
+        URLConnection yc = custUrl.openConnection ();
+        BufferedReader in = new BufferedReader (new InputStreamReader (yc.getInputStream (), "UTF-8"));
+        String inputLine;
+        StringBuilder a = new StringBuilder ();
+        while ((inputLine = in.readLine ()) != null)
+            a.append (inputLine);
+        in.close ();
+
+        return a.toString ();
+
+    }
+
+    public class ExtensionInitializer extends AsyncTask<String, String, String> {
 
         private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
         private String jsonShit;
-        private Map <String, Double> domainList;
+        private Map<String, Double> domainList;
 
-        public ExtensionInitializor ()
-        {
+        public ExtensionInitializer () {
 
-            domainList = new HashMap <String, Double> ();
+            domainList = new HashMap<String, Double> ();
 
         }
 
         @Override
         protected String doInBackground (String... params) {
 
-            Log.d ("CompraApiAdapter", "Hello this is the CompraApiAdapter.");
+            Log.d ("Bob", "Hello this is the ExtensionInitializer.");
 
             try {
 
                 jsonShit = getUrlSource (URL);
-
-                Log.d ("Bob", "Bij dezen de jsonShit contents:");
-                Log.d ("Bob", jsonShit);
 
             } catch (IOException e) {
 
@@ -137,32 +163,25 @@ public class MainActivity extends ActionBarActivity {
             }
 
             JSONObject jsonObject = null;
-            try
-            {
+            try {
 
                 jsonObject = new JSONObject (jsonShit);
                 JSONArray jsonArray = jsonObject.getJSONArray ("items");
 
-                Map <String, Double> localDomainList;
-                localDomainList = new HashMap <String, Double> ();
-                for
-                        (
-                        int i = 0;
-                        i < jsonArray.length ();
-                        i++
-                        )
-                {
+                Map<String, Double> localDomainList;
+                localDomainList = new HashMap<String, Double> ();
+                for (int i = 0; i < jsonArray.length (); i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
-                    String domain   = domainObj.getString("tld");
-                    double price    = domainObj.getDouble("price_per_year");
+                    String domain = domainObj.getString ("tld");
+                    double price = domainObj.getDouble ("price_per_year");
 
                     localDomainList.put (domain, price);
 
                 }
 
-                Log.d ("Bob", "CompraApiAdapter successfully completed the domainList Map.");
+                Log.d ("Bob", "ExtensionInitializer successfully completed the domainList Map.");
                 domainList = localDomainList;
 
             } catch (JSONException e) {
@@ -177,15 +196,14 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute (String string)
-        {
+        protected void onPostExecute (String string) {
 
             Log.d ("Bob", "Doe ik iets of ben ik meuilijk lui?");
 
-            if ( ! domainList.isEmpty ()) {
+            if (!domainList.isEmpty ()) {
 
                 // Iterates through all found domains
-                Iterator <Map.Entry <String, Double>> domainListIterator = domainList.entrySet ().iterator ();
+                Iterator<Map.Entry<String, Double>> domainListIterator = domainList.entrySet ().iterator ();
                 while (domainListIterator.hasNext ()) {
 
                     // Get the next entry
@@ -212,9 +230,7 @@ public class MainActivity extends ActionBarActivity {
 
                 }
 
-            }
-            else
-            {
+            } else {
 
                 Log.d ("Bob", "domainList is very empty.");
 
@@ -222,27 +238,104 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-        // This code was copied from the internet.
-        // Source: http://stackoverflow.com/questions/8616781/how-to-get-a-web-pages-source-code-from-java
-        private String getUrlSource(String url) throws IOException
-        {
+    }
 
-            URL custUrl = null;
+    public class ExtensionSearchOnDomain extends AsyncTask<String, String, String> {
+
+        private String url;
+        private String jsonShit;
+        private Map<String, Double> domainList;
+
+        @Override
+        protected String doInBackground (String... params) {
+
             try {
-                custUrl = new URL(url);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            URLConnection yc = custUrl.openConnection();
-            BufferedReader in = new BufferedReader(new InputStreamReader (
-                    yc.getInputStream(), "UTF-8"));
-            String inputLine;
-            StringBuilder a = new StringBuilder();
-            while ((inputLine = in.readLine()) != null)
-                a.append(inputLine);
-            in.close();
 
-            return a.toString ();
+                String actualDomein = params[0];
+
+                url = "https://www.compra.nl/?c=api&m=checkDomain&domein=" + actualDomein;
+                jsonShit = getUrlSource (url);
+
+
+            } catch (IOException e) {
+
+                e.printStackTrace ();
+
+            }
+
+            JSONObject jsonObject = null;
+            try {
+
+                jsonObject = new JSONObject (jsonShit);
+                JSONArray jsonArray = jsonObject.getJSONArray ("items");
+
+                Map<String, Double> localDomainList;
+                localDomainList = new HashMap<String, Double> ();
+                for (int i = 0; i < jsonArray.length (); i++) {
+
+                    // Create the JSON data object
+                    JSONObject domainObj = jsonArray.getJSONObject (i);
+                    String domain = domainObj.getString ("tld");
+                    double price = domainObj.getDouble ("price_per_year");
+
+                    localDomainList.put (domain, price);
+
+                }
+
+                Log.d ("Bob", "ExtensionSearchOnDomain successfully executed");
+                domainList = localDomainList;
+
+            } catch (JSONException e) {
+
+                Log.d ("Bob", "ExtensionSearchOnDomain FAILED");
+                e.printStackTrace ();
+
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute (String string) {
+
+            Log.d ("Bob", "Doe ik iets of ben ik meuilijk lui?");
+
+            if (!domainList.isEmpty ()) {
+
+                // Iterates through all found domains
+                Iterator<Map.Entry<String, Double>> domainListIterator = domainList.entrySet ().iterator ();
+                while (domainListIterator.hasNext ()) {
+
+                    // Get the next entry
+                    Map.Entry domainListIt = domainListIterator.next ();
+
+                    LayoutInflater layoutInflater;
+                    layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+
+                    // Add a new domain_row
+                    View newRow = layoutInflater.inflate (R.layout.domain_row, null);
+
+                    // Attempt to change the text of the domain_row layout to the corresponding domain
+                    TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
+                    domeinRowText.setText (domainListIt.getKey ().toString ());
+
+                    Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+                    String euroSign = "\u20ac";
+                    domeinPriceButton.setText (euroSign + " " + domainListIt.getValue ().toString ());
+
+                    TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
+                    table.addView (newRow);
+
+//                    Log.d ("Bob", domainListIt.getKey ().toString ());
+
+                }
+
+            } else {
+
+                Log.d ("Bob", "domainList is very empty.");
+
+            }
 
         }
 
