@@ -1,10 +1,11 @@
 package nl.compra.compraapp;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteTableLockedException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,7 +33,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+{
 
     public Map <String, Double> applicationDomainList;
 
@@ -101,6 +103,8 @@ public class MainActivity extends ActionBarActivity {
     private void clearDomains ()
     {
 
+        Log.d ("Bob", "User attempted to clear all table rows.");
+
         TableLayout tl = (TableLayout) findViewById (R.id.domainRowsTable);
         tl.removeAllViews ();
 
@@ -128,38 +132,66 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        // Start CompraApiAdapter thread to load all domains
-        new ExtensionInitializer ().execute ();
+        final EditText searchEditText = (EditText) findViewById(R.id.searchEditText);
 
-        Context context = getApplicationContext ();
-        CharSequence text = "Welcome back to the Compra App!";
-        int duration = Toast.LENGTH_SHORT;
+        searchEditText.addTextChangedListener(new TextWatcher () {
 
-        Toast toast = Toast.makeText (context, text, duration);
+            @Override
+            public void beforeTextChanged (CharSequence s, int start, int count, int after) {
 
-        toast.show ();
+            }
 
-        // Creates the spinners
+            @Override
+            public void onTextChanged (CharSequence s, int start, int before, int count) {
 
-        Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource (this, R.array.catagories, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerDomeinen.setAdapter (adapter);
+            }
 
-        Spinner spinnerSorteringen = (Spinner) findViewById (R.id.sorteringen);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapterrrrrrrrrrr = ArrayAdapter.createFromResource (this, R.array.sort, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapterrrrrrrrrrr.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerSorteringen.setAdapter (adapterrrrrrrrrrr);
+            @Override
+            public void afterTextChanged (Editable s) {
 
-    }
+                if (searchEditText.getText ().toString ().equals (""))
+                {
 
-    @Override
+                    new ExtensionInitializer ().execute ();
+
+                }
+
+            }
+
+        });
+
+            // Start CompraApiAdapter thread to load all domains
+            new ExtensionInitializer ().execute ();
+
+            Context context = getApplicationContext ();
+            CharSequence text = "Welcome back to the Compra App!";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText (context, text, duration);
+
+            toast.show();
+
+            // Creates the spinners
+
+            Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource (this, R.array.catagories, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            spinnerDomeinen.setAdapter(adapter);
+
+            Spinner spinnerSorteringen = (Spinner) findViewById (R.id.sorteringen);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapterrrrrrrrrrr = ArrayAdapter.createFromResource (this, R.array.sort, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapterrrrrrrrrrr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            spinnerSorteringen.setAdapter(adapterrrrrrrrrrr);
+
+        }
+
+        @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater ().inflate (R.menu.menu_main, menu);
@@ -266,7 +298,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute (String string) {
 
-            Log.d ("Bob", "Doe ik iets of ben ik meuilijk lui?");
+            Log.d ("Bob", "Domains have been initialized");
 
             initializeDomains ();
 
@@ -274,7 +306,8 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    public class ExtensionSearchOnDomain extends AsyncTask<String, String, String> {
+    public class ExtensionSearchOnDomain extends AsyncTask<String, String, String>
+    {
 
         private String url;
         private String jsonShit;
