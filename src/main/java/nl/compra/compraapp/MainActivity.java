@@ -29,19 +29,21 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends ActionBarActivity
 {
 
-    public Map <String, Double> applicationDomainList;
+    public List <Domain> applicationDomainList;
 
     public MainActivity ()
     {
 
-        applicationDomainList = new HashMap <String, Double> ();
+        applicationDomainList = new ArrayList <Domain> ();
 
     }
 
@@ -268,16 +270,35 @@ public class MainActivity extends ActionBarActivity
                 jsonObject = new JSONObject (jsonShit);
                 JSONArray jsonArray = jsonObject.getJSONArray ("items");
 
-                Map<String, Double> localDomainList;
-                localDomainList = new HashMap<String, Double> ();
+
+                // Exists for debugging purposes
+//                Log.d ("Bob", "Ik ga nu gezellig de hele jsonarray af");
+//                for (int i = 0; i < jsonArray.length (); i++)
+//                {
+//
+//                    Log.d ("Bob", jsonArray.get (i).toString ());
+//
+//                }
+
+                List <Domain> localDomainList;
+                localDomainList = new ArrayList <Domain> ();
                 for (int i = 0; i < jsonArray.length (); i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
-                    String domain = domainObj.getString ("tld");
-                    double price = domainObj.getDouble ("price_per_year");
 
-                    localDomainList.put (domain, price);
+                    int id                  = domainObj.getInt ("id");
+                    String tld              = domainObj.getString ("tld");
+                    double pricePerYear     = domainObj.getDouble ("price_per_year");
+                    int popular             = domainObj.getInt ("popular");
+                    int newDomain           = domainObj.getInt ("new");
+                    String region           = domainObj.getString ("region");
+                    String restriction      = domainObj.getString ("restriction");
+
+                    localDomainList.add
+                            (new Domain (id, tld, pricePerYear, popular, newDomain, region, restriction));
+
+//                    localDomainList.put (domain, price);
 
                 }
 
@@ -335,16 +356,24 @@ public class MainActivity extends ActionBarActivity
                 jsonObject = new JSONObject (jsonShit);
                 JSONArray jsonArray = jsonObject.getJSONArray ("items");
 
-                Map<String, Double> localDomainList;
-                localDomainList = new HashMap<String, Double> ();
+                List <Domain> localDomainList;
+                localDomainList = new ArrayList <Domain> ();
                 for (int i = 0; i < jsonArray.length (); i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
-                    String domain = domainObj.getString ("tld");
-                    double price = domainObj.getDouble ("price_per_year");
 
-                    localDomainList.put (domain, price);
+                    int id                  = domainObj.getInt ("id");
+                    String tld              = domainObj.getString ("tld");
+                    double pricePerYear     = domainObj.getDouble ("price_per_year");
+                    int popular             = domainObj.getInt ("popular");
+                    int newDomain           = domainObj.getInt ("new");
+                    String region           = domainObj.getString ("region");
+                    String restriction      = domainObj.getString ("restriction");
+
+                    localDomainList.add
+                            (new Domain (id, tld, pricePerYear, popular, newDomain, region, restriction));
+
 
                 }
 
