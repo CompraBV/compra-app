@@ -1,6 +1,7 @@
 package nl.compra.compraapp;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteTableLockedException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -33,6 +34,78 @@ import java.util.Map;
 
 public class MainActivity extends ActionBarActivity {
 
+    public Map <String, Double> applicationDomainList;
+
+    public MainActivity ()
+    {
+
+        applicationDomainList = new HashMap <String, Double> ();
+
+    }
+
+    public void initializeDomains ()
+    {
+
+        Log.d ("Bob", "domainzzzzzzzzzz");
+
+        if ( ! applicationDomainList.isEmpty ()) {
+
+            // Iterates through all found domains
+            Iterator<Map.Entry<String, Double>> domainListIterator = applicationDomainList.entrySet ().iterator ();
+            while (domainListIterator.hasNext ()) {
+
+                // Get the next entry
+                Map.Entry domainListIt = domainListIterator.next ();
+
+                LayoutInflater layoutInflater;
+                layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+
+                // Add a new domain_row
+                View newRow = layoutInflater.inflate (R.layout.domain_row, null);
+
+                // Attempt to change the text of the domain_row layout to the corresponding domain
+                TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
+                domeinRowText.setText (domainListIt.getKey ().toString ());
+
+                Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+                String euroSign = "\u20ac";
+                domeinPriceButton.setText (euroSign + " " + domainListIt.getValue ().toString ());
+
+                TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
+                table.addView (newRow);
+
+            }
+
+        } else {
+
+            Log.d ("Bob", "domainList is very empty.");
+
+        }
+
+    }
+
+    public void searchByDomain (View view)
+    {
+
+        Log.d ("Bob", "User is searching by domain.");
+
+        clearDomains ();
+
+        EditText searchField = (EditText) findViewById (R.id.searchEditText);
+        String domain = searchField.getText ().toString ();
+
+        new ExtensionSearchOnDomain ().execute (domain);
+
+    }
+
+    private void clearDomains ()
+    {
+
+        TableLayout tl = (TableLayout) findViewById (R.id.domainRowsTable);
+        tl.removeAllViews ();
+
+    }
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
 
@@ -40,6 +113,20 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView (R.layout.activity_main);
 
+
+        //////////////////////////////////////////////////////////////
+        // Set listeners here that the layout can't for some reason //
+        //////////////////////////////////////////////////////////////
+
+        Button b = (Button) findViewById (R.id.domainSearchButton);
+        b.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+                searchByDomain (v);
+
+            }
+        });
 
         // Start CompraApiAdapter thread to load all domains
         new ExtensionInitializer ().execute ();
@@ -100,18 +187,6 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected (item);
     }
 
-    public void searchByDomain (View view)
-    {
-
-        Log.d ("Bob", "User is searching by domain.");
-
-        EditText searchField = (EditText) findViewById (R.id.searchEditText);
-        String domain = searchField.getText ().toString ();
-
-        new ExtensionSearchOnDomain ().execute (domain);
-
-    }
-
     // This code was copied from the internet.
     // Source: http://stackoverflow.com/questions/8616781/how-to-get-a-web-pages-source-code-from-java
     private String getUrlSource (String url) throws IOException {
@@ -138,13 +213,6 @@ public class MainActivity extends ActionBarActivity {
 
         private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
         private String jsonShit;
-        private Map<String, Double> domainList;
-
-        public ExtensionInitializer () {
-
-            domainList = new HashMap<String, Double> ();
-
-        }
 
         @Override
         protected String doInBackground (String... params) {
@@ -182,7 +250,7 @@ public class MainActivity extends ActionBarActivity {
                 }
 
                 Log.d ("Bob", "ExtensionInitializer successfully completed the domainList Map.");
-                domainList = localDomainList;
+                applicationDomainList = localDomainList;
 
             } catch (JSONException e) {
 
@@ -200,41 +268,7 @@ public class MainActivity extends ActionBarActivity {
 
             Log.d ("Bob", "Doe ik iets of ben ik meuilijk lui?");
 
-            if (!domainList.isEmpty ()) {
-
-                // Iterates through all found domains
-                Iterator<Map.Entry<String, Double>> domainListIterator = domainList.entrySet ().iterator ();
-                while (domainListIterator.hasNext ()) {
-
-                    // Get the next entry
-                    Map.Entry domainListIt = domainListIterator.next ();
-
-                    LayoutInflater layoutInflater;
-                    layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
-
-                    // Add a new domain_row
-                    View newRow = layoutInflater.inflate (R.layout.domain_row, null);
-
-                    // Attempt to change the text of the domain_row layout to the corresponding domain
-                    TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
-                    domeinRowText.setText (domainListIt.getKey ().toString ());
-
-                    Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
-                    String euroSign = "\u20ac";
-                    domeinPriceButton.setText (euroSign + " " + domainListIt.getValue ().toString ());
-
-                    TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
-                    table.addView (newRow);
-
-//                    Log.d ("Bob", domainListIt.getKey ().toString ());
-
-                }
-
-            } else {
-
-                Log.d ("Bob", "domainList is very empty.");
-
-            }
+            initializeDomains ();
 
         }
 
@@ -244,7 +278,6 @@ public class MainActivity extends ActionBarActivity {
 
         private String url;
         private String jsonShit;
-        private Map<String, Double> domainList;
 
         @Override
         protected String doInBackground (String... params) {
@@ -283,7 +316,7 @@ public class MainActivity extends ActionBarActivity {
                 }
 
                 Log.d ("Bob", "ExtensionSearchOnDomain successfully executed");
-                domainList = localDomainList;
+                applicationDomainList = localDomainList;
 
             } catch (JSONException e) {
 
@@ -301,41 +334,7 @@ public class MainActivity extends ActionBarActivity {
 
             Log.d ("Bob", "Doe ik iets of ben ik meuilijk lui?");
 
-            if (!domainList.isEmpty ()) {
 
-                // Iterates through all found domains
-                Iterator<Map.Entry<String, Double>> domainListIterator = domainList.entrySet ().iterator ();
-                while (domainListIterator.hasNext ()) {
-
-                    // Get the next entry
-                    Map.Entry domainListIt = domainListIterator.next ();
-
-                    LayoutInflater layoutInflater;
-                    layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
-
-                    // Add a new domain_row
-                    View newRow = layoutInflater.inflate (R.layout.domain_row, null);
-
-                    // Attempt to change the text of the domain_row layout to the corresponding domain
-                    TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
-                    domeinRowText.setText (domainListIt.getKey ().toString ());
-
-                    Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
-                    String euroSign = "\u20ac";
-                    domeinPriceButton.setText (euroSign + " " + domainListIt.getValue ().toString ());
-
-                    TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
-                    table.addView (newRow);
-
-//                    Log.d ("Bob", domainListIt.getKey ().toString ());
-
-                }
-
-            } else {
-
-                Log.d ("Bob", "domainList is very empty.");
-
-            }
 
         }
 
