@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,37 +30,41 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends ActionBarActivity
 {
 
-    public List <Domain> applicationDomainList;
+    private static final StrikethroughSpan STRIKE_THROUGH_SPAN = new StrikethroughSpan();
+
+    private List <Extension> applicationExtensions;
+    private String domainSearchedFor;
 
     public MainActivity ()
     {
 
-        applicationDomainList = new ArrayList <Domain> ();
+        applicationExtensions = new ArrayList <Extension> ();
 
     }
 
-    public void initializeDomains ()
+    public void intializeExtensions ()
     {
 
         Log.d ("Bob", "domainzzzzzzzzzz");
 
-        if ( ! applicationDomainList.isEmpty ()) {
+        if ( ! applicationExtensions.isEmpty ()) {
 
             // Iterates through all found domains
-            Iterator<Map.Entry<String, Double>> domainListIterator = applicationDomainList.entrySet ().iterator ();
-            while (domainListIterator.hasNext ()) {
+            Iterator<Extension> extensionListIterator = applicationExtensions.iterator ();
+            while (extensionListIterator.hasNext ()) {
 
-                // Get the next entry
-                Map.Entry domainListIt = domainListIterator.next ();
+                // Get the next iteration
+                Extension extensionIt = extensionListIterator.next ();
 
                 LayoutInflater layoutInflater;
                 layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
@@ -69,11 +74,48 @@ public class MainActivity extends ActionBarActivity
 
                 // Attempt to change the text of the domain_row layout to the corresponding domain
                 TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
-                domeinRowText.setText (domainListIt.getKey ().toString ());
+                domeinRowText.setText (extensionIt.getTld ());
 
                 Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
                 String euroSign = "\u20ac";
-                domeinPriceButton.setText (euroSign + " " + domainListIt.getValue ().toString ());
+
+                Long now = System.currentTimeMillis ();
+                Date dateOfToday = new Date (now);
+
+                Date domainOfferDateBegin = null;
+                Date domainOfferDateEnd = null;
+
+                SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
+                try {
+                     domainOfferDateBegin = sdf.parse (extensionIt.getSpecialOfferDateBegin ());
+                     domainOfferDateEnd = sdf.parse (extensionIt.getSpecialOfferDateEnd ());
+                } catch (ParseException e) {
+                    e.printStackTrace ();
+                }
+
+                if (dateOfToday.after (domainOfferDateBegin) && dateOfToday.before (domainOfferDateEnd))
+                {
+
+                    Log.d ("Bob", "THE DOMAIN " + extensionIt.getTld () + " IS ON SAAAAAAALE #STEAMSALE #PRAISEGABEN the new price is " + extensionIt.getSpecialPrice ());
+
+                    String originalPrice    = euroSign + " " + extensionIt.getPricePerYear () + "0";
+                    String salePrice        = euroSign + " " + extensionIt.getSpecialPrice () + "0";
+
+                    domeinPriceButton.setText (salePrice);
+//                    domeinPriceButton.setText (originalPrice + " " + salePrice, TextView.BufferType.SPANNABLE);
+
+//                    Spannable spannable = (Spannable) domeinPriceButton.getText();
+//                    spannable.setSpan (STRIKE_THROUGH_SPAN, 0, originalPrice.length (), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+//                    domeinPriceButton.setPaintFlags (domeinPriceButton.getPaintFlags () | Paint.STRIKE_THRU_TEXT_FLAG); // this works but it strikes all through
+
+                }
+                else
+                {
+
+                    domeinPriceButton.setText (euroSign + " " + extensionIt.getPricePerYear () + "0");
+
+                }
 
                 TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
                 table.addView (newRow);
@@ -91,13 +133,15 @@ public class MainActivity extends ActionBarActivity
     public void searchByDomain (View view)
     {
 
-        Log.d ("Bob", "User is searching by domain.");
 
         clearDomains ();
 
         EditText searchField = (EditText) findViewById (R.id.searchEditText);
         String domain = searchField.getText ().toString ();
 
+        domainSearchedFor = domain;
+
+        Log.d ("Bob", "User is searching by the domain: " + domainSearchedFor);
         new ExtensionSearchOnDomain ().execute (domain);
 
     }
@@ -113,7 +157,8 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate (Bundle savedInstanceState)
+    {
 
         super.onCreate (savedInstanceState);
 
@@ -193,15 +238,17 @@ public class MainActivity extends ActionBarActivity
 
         }
 
-        @Override
-    public boolean onCreateOptionsMenu (Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater ().inflate (R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem item) {
+    public boolean onOptionsItemSelected (MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -221,9 +268,8 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected (item);
     }
 
-    // This code was copied from the internet.
-    // Source: http://stackoverflow.com/questions/8616781/how-to-get-a-web-pages-source-code-from-java
-    private String getUrlSource (String url) throws IOException {
+    private String getUrlSource (String url) throws IOException
+    {
 
         URL custUrl = null;
         try {
@@ -243,7 +289,8 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-    public class ExtensionInitializer extends AsyncTask<String, String, String> {
+    public class ExtensionInitializer extends AsyncTask<String, String, String>
+    {
 
         private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
         private String jsonShit;
@@ -280,30 +327,40 @@ public class MainActivity extends ActionBarActivity
 //
 //                }
 
-                List <Domain> localDomainList;
-                localDomainList = new ArrayList <Domain> ();
+                List <Extension> localExtensionList;
+                localExtensionList = new ArrayList <Extension> ();
                 for (int i = 0; i < jsonArray.length (); i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
 
-                    int id                  = domainObj.getInt ("id");
-                    String tld              = domainObj.getString ("tld");
-                    double pricePerYear     = domainObj.getDouble ("price_per_year");
-                    int popular             = domainObj.getInt ("popular");
-                    int newDomain           = domainObj.getInt ("new");
-                    String region           = domainObj.getString ("region");
-                    String restriction      = domainObj.getString ("restriction");
+                    int id = domainObj.getInt ("id");
+                    String tld = domainObj.getString ("tld");
+                    double pricePerYear = domainObj.getDouble ("price_per_year");
+                    int popular = domainObj.getInt ("popular");
+                    int newDomain                   = domainObj.getInt ("new");
+                    String region = domainObj.getString ("region");
+                    String restriction              = domainObj.getString ("restriction");
+                    String specialOfferDateBegin    = domainObj.getString ("special_offer_begin");
+                    String specialOfferDateEnd      = domainObj.getString ("special_offer_end");
+                    double specialPrice = domainObj.getDouble ("special_offer_price");
 
-                    localDomainList.add
-                            (new Domain (id, tld, pricePerYear, popular, newDomain, region, restriction));
+                    localExtensionList.add
+                    (
+                        new Extension
+                        (
+                            id, tld, pricePerYear, popular, newDomain,
+                            region, restriction, specialOfferDateBegin,
+                            specialOfferDateEnd, specialPrice
+                        )
+                    );
 
-//                    localDomainList.put (domain, price);
+//                    localExtensionList.put (domain, price);
 
                 }
 
                 Log.d ("Bob", "ExtensionInitializer successfully completed the domainList Map.");
-                applicationDomainList = localDomainList;
+                applicationExtensions = localExtensionList;
 
             } catch (JSONException e) {
 
@@ -319,9 +376,9 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPostExecute (String string) {
 
-            Log.d ("Bob", "Domains have been initialized");
+            Log.d ("Bob", "Extensions have been initialized");
 
-            initializeDomains ();
+            intializeExtensions ();
 
         }
 
@@ -356,29 +413,45 @@ public class MainActivity extends ActionBarActivity
                 jsonObject = new JSONObject (jsonShit);
                 JSONArray jsonArray = jsonObject.getJSONArray ("items");
 
-                List <Domain> localDomainList;
-                localDomainList = new ArrayList <Domain> ();
-                for (int i = 0; i < jsonArray.length (); i++) {
+                List <Extension> localExtensionList;
+                localExtensionList = new ArrayList <Extension> ();
+                for
+                (
+                    int i = 0;
+                    i < jsonArray.length ();
+                    i++
+                )
+                {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
 
-                    int id                  = domainObj.getInt ("id");
-                    String tld              = domainObj.getString ("tld");
-                    double pricePerYear     = domainObj.getDouble ("price_per_year");
-                    int popular             = domainObj.getInt ("popular");
-                    int newDomain           = domainObj.getInt ("new");
-                    String region           = domainObj.getString ("region");
-                    String restriction      = domainObj.getString ("restriction");
+                    int id                          = domainObj.getInt ("id");
+                    String tld                      = domainObj.getString ("tld");
+                    double pricePerYear             = domainObj.getDouble ("price_per_year");
+                    int popular                     = domainObj.getInt ("popular");
+                    int newDomain                   = domainObj.getInt ("new");
+                    String region                   = domainObj.getString ("region");
+                    String restriction              = domainObj.getString ("restriction");
+                    String specialOfferDateBegin    = domainObj.getString ("special_offer_begin");
+                    String specialOfferDateEnd      = domainObj.getString ("special_offer_end");
+                    int specialPrice                = domainObj.getInt ("special_offer_price");
 
-                    localDomainList.add
-                            (new Domain (id, tld, pricePerYear, popular, newDomain, region, restriction));
+                    localExtensionList.add
+                    (
+                        new Extension
+                        (
+                            id, tld, pricePerYear, popular, newDomain,
+                            region, restriction, specialOfferDateBegin,
+                            specialOfferDateEnd, specialPrice
+                        )
+                    );
 
 
                 }
 
                 Log.d ("Bob", "ExtensionSearchOnDomain successfully executed");
-                applicationDomainList = localDomainList;
+                applicationExtensions = localExtensionList;
 
             } catch (JSONException e) {
 
@@ -391,10 +464,56 @@ public class MainActivity extends ActionBarActivity
 
         }
 
+
+
         @Override
         protected void onPostExecute (String string) {
 
             Log.d ("Bob", "Doe ik iets of ben ik meuilijk lui?");
+
+        }
+
+    }
+
+    public class CheckIfDomainAvailable extends AsyncTask <String, String, String>
+    {
+
+        private String url;
+        private String jsonShit;
+        private String available;
+
+        @Override
+        protected String doInBackground (String... params) {
+
+            try {
+
+                String actualDomein = params[0];
+
+                url = "https://www.compra.nl/?c=api&m=checkDomain&domein=" + actualDomein;
+                jsonShit = getUrlSource (url);
+
+                JSONObject jsonObject = null;
+                jsonObject = new JSONObject (jsonShit);
+
+                available = jsonObject.getInt ("code") == 210
+                    ? "true"
+                    : "false";
+
+            } catch (IOException e) {
+
+                e.printStackTrace ();
+
+            } catch (JSONException e) {
+                e.printStackTrace ();
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute (String string)
+        {
 
 
 
