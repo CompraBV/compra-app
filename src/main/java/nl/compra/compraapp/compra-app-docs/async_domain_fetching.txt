@@ -1,0 +1,6 @@
+- App starts and displays a spinning loading symbol in domain spot
+- CompraApiAdapter is started to fetch all domains
+- CAA builds a Map with the domain and it's price procedually
+- CAA defines the domainList in the MainActivity with the Map it just built.
+- CAA instructs the main activity to display all domains within the domainList map.
+

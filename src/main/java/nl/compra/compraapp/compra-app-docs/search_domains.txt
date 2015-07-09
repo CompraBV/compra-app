@@ -1,0 +1,2 @@
+- Make it so domains aren't Map <String, Double> but become Map <ArrayList <String>> to make sure you catch the entire array (in case of numbers just parse them to integers)
+- List of available and unavailable domains based on domain searched for
