@@ -32,8 +32,9 @@
             android:layout_marginStart="25dp"
             android:minWidth="200dp"
             android:hint="Domein zoeken"
-            android:maxLines="1"
-            android:maxLength="25" />
+            android:maxLength="25"
+            android:lines="1"
+            android:singleLine="true"/>
 
         <Button
             android:layout_width="40dp"
