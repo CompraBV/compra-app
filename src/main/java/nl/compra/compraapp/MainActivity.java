@@ -1,6 +1,8 @@
 package nl.compra.compraapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -40,7 +42,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     private static final StrikethroughSpan STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
-    private static final int MAX_AMOUNT_OF_DOMAINS = 20;
+    private static final int MAX_AMOUNT_OF_DOMAINS = 10;
 
     private List<Extension> applicationExtensions;
     private String domainSearchedFor;
@@ -129,15 +131,26 @@ public class MainActivity extends ActionBarActivity {
     public void searchByDomain (View view) {
 
 
-        clearDomains ();
-
         EditText searchField = (EditText) findViewById (R.id.searchEditText);
         String domain = searchField.getText ().toString ();
 
-        domainSearchedFor = domain;
+        if ( ! domain.contains ("."))
+        {
 
-        Log.d ("Bob", "User is searching by the domain: " + domainSearchedFor);
-        new CheckIfDomainAvailable ().execute (domain);
+            notifyUser ("That's not a valid domain.");
+
+        }
+        else
+        {
+
+            clearDomains ();
+            domainSearchedFor = domain;
+
+            Log.d ("Bob", "User is searching by the domain: " + domainSearchedFor);
+            new CheckIfDomainAvailable ().execute (domain);
+
+        }
+
 
     }
 
@@ -147,6 +160,22 @@ public class MainActivity extends ActionBarActivity {
 
         TableLayout tl = (TableLayout) findViewById (R.id.domainRowsTable);
         tl.removeAllViews ();
+
+    }
+
+    private void notifyUser (String message)
+    {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show ();
 
     }
 
@@ -191,6 +220,7 @@ public class MainActivity extends ActionBarActivity {
 
                 if (searchEditText.getText ().toString ().equals ("")) {
 
+                    clearDomains ();
                     new ExtensionInitializer ().execute ();
 
                 }
@@ -581,7 +611,7 @@ public class MainActivity extends ActionBarActivity {
 
                     try {
 
-                        jsonBuffer = getUrlSource (url + domainWithoutExtension + extensionIt.getTld ());
+                        jsonBuffer = getUrlSource (url + domainWithoutExtension + "." + extensionIt.getTld ());
                         jsonObject = new JSONObject (jsonBuffer);
                         boolean availabillity = jsonObject.getString ("code").equals ("210") ? true : false;
                         extensionIt.setAvailable (availabillity);
