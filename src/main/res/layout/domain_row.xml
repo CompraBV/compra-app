@@ -22,7 +22,7 @@
             android:layout_alignParentStart="true" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:text="€1337,-"
             android:id="@+id/domeinRowOrderButton"
@@ -31,6 +31,6 @@
             android:layout_alignParentEnd="true"
             android:width="150dp"
             android:layout_alignWithParentIfMissing="false"
-            android:layout_alignParentLeft="false" />
+            />
     </RelativeLayout>
 </TableRow>
