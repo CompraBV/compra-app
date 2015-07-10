@@ -179,6 +179,18 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    private void toastUser (String message, final int length)
+    {
+
+        Context context = getApplicationContext ();
+        int duration = length;
+
+        Toast toast = Toast.makeText (context, message, duration); // < Ignore this error.
+
+        toast.show ();
+
+    }
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
 
@@ -404,6 +416,14 @@ public class MainActivity extends ActionBarActivity {
         private String jsonShit;
 
         @Override
+        protected void onPreExecute ()
+        {
+
+            toastUser ("Loading extensions...", Toast.LENGTH_SHORT);
+
+        }
+
+        @Override
         protected String doInBackground (String... params) {
 
             Log.d ("Bob", "Hello this is the ExtensionInitializer.");
@@ -568,6 +588,14 @@ public class MainActivity extends ActionBarActivity {
 
         private String url = "https://www.compra.nl/?c=api&m=checkDomain&domein=";
         private String jsonBuffer;
+
+        @Override
+        protected void onPreExecute ()
+        {
+
+            toastUser ("Loading domains & extensions...", Toast.LENGTH_LONG);
+
+        }
 
         @Override
         protected String doInBackground (String... params) {
