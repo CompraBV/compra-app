@@ -244,14 +244,6 @@ public class MainActivity extends ActionBarActivity {
         // Start CompraApiAdapter thread to load all domains
         new ExtensionInitializer ().execute ();
 
-        Context context = getApplicationContext ();
-        CharSequence text = "Welcome back to the Compra App!";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText (context, text, duration);
-
-        toast.show ();
-
         // Creates the spinners
 
         Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
