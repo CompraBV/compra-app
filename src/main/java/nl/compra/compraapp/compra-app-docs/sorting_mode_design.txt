@@ -1,12 +1,10 @@
 Extension list:
 
-- Extension list is loaded in from JSON.
-- Extension list is intercepted before loading into the TableLayout to be sorted
-- Extension list is loaded into the TableLayout
+- The user demands a sorting on extensions
+- The TableLayout is cleared
+- The applicationExtensionList is sorted
+- The application calls for the reinitialization method to re-render the list
 
 Domain list when searched:
 
-- Domain list is loaded in from the JSON along with the searched for domain Domain object
-- domainSearchedFor Domain object will be excluded from sorting since it has top priority
-- All the rest is in applicationExtensionList (I think so atleast) and is intercepted to be loaded
-- applicationExtensionLit is loaded into the TableLayout
+??????????
