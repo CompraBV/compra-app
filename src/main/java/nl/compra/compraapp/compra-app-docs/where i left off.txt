@@ -1,4 +1,0 @@
-- search for domain
-- get all extensions
-- check if <DOMAIN>.<EXTENSION> is available by looping the domain through all extensions
-- List it
