@@ -44,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
     private static final StrikethroughSpan STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
     private static final int MAX_AMOUNT_OF_DOMAINS = 10;
 
-    private List<Extension> applicationExtensions;
+    private List <Extension> applicationExtensions;
     private String actualDomainSearchedFor;
     private boolean domainSearchedForAvailabillity;
     private Domain domainSearchedFor;
