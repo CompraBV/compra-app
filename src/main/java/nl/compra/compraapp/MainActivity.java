@@ -625,7 +625,7 @@ public class MainActivity extends ActionBarActivity {
                 Log.d ("Bob", extensionOfDomain);
 
                 /*
-                 * Gonna try and fetch the desired extension details now
+                 * Fetch the desired extension details
                  */
                 try {
 
