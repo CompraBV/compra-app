@@ -45,8 +45,9 @@ public class MainActivity extends ActionBarActivity {
     private static final int MAX_AMOUNT_OF_DOMAINS = 10;
 
     private List<Extension> applicationExtensions;
-    private String domainSearchedFor;
+    private String actualDomainSearchedFor;
     private boolean domainSearchedForAvailabillity;
+    private Domain domainSearchedFor;
 
     public MainActivity () {
 
@@ -144,9 +145,9 @@ public class MainActivity extends ActionBarActivity {
         {
 
             clearDomains ();
-            domainSearchedFor = domain;
+            actualDomainSearchedFor = domain;
 
-            Log.d ("Bob", "User is searching by the domain: " + domainSearchedFor);
+            Log.d ("Bob", "User is searching by the domain: " + actualDomainSearchedFor);
             new CheckIfDomainAvailable ().execute (domain);
 
         }
@@ -317,7 +318,7 @@ public class MainActivity extends ActionBarActivity {
 
         clearDomains ();
 
-        if (!applicationExtensions.isEmpty () && domainSearchedFor != null) {
+        if (!applicationExtensions.isEmpty () && actualDomainSearchedFor != null) {
 
             // Iterates through all found domains
             Iterator<Extension> extensionListIterator = applicationExtensions.iterator ();
@@ -334,7 +335,7 @@ public class MainActivity extends ActionBarActivity {
 
                 // Attempt to change the text of the domain_row layout to the corresponding domain
                 TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
-                domeinRowText.setText ((domainSearchedFor.substring (0, domainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
+                domeinRowText.setText ((actualDomainSearchedFor.substring (0, actualDomainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
 
 
                 Button domainPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
@@ -398,7 +399,7 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-        domainSearchedFor = null;
+        actualDomainSearchedFor = null;
 
     }
 
@@ -614,10 +615,32 @@ public class MainActivity extends ActionBarActivity {
                 String domainWithExtension = params[0];
 
                 // Remove the extension
-                String domainWithoutExtension = domainWithExtension.substring (0, domainWithExtension.indexOf ("."));
+                String domainWithoutExtension   = domainWithExtension.substring (0, domainWithExtension.indexOf ("."));
+                String extensionOfDomain        = domainWithExtension.substring (domainWithExtension.indexOf (".") + 1, domainWithExtension.length ());
 
                 Log.d ("Bob", "domainWithoutExtension value:");
                 Log.d ("Bob", domainWithoutExtension);
+
+                Log.d ("Bob", "extensionOfDomain value:");
+                Log.d ("Bob", extensionOfDomain);
+
+                /*
+                 * Gonna try and fetch the desired extension details now
+                 */
+                try {
+
+                    jsonBuffer = getUrlSource ("https://www.compra.nl/?c=api&m=getExtension&extension=" + extensionOfDomain);
+
+                } catch (IOException e) {
+
+                    Log.d ("Bob", "jsonBuffer wilt niet getUrlSource() doen.");
+                    e.printStackTrace ();
+
+                }
+
+                jsonObject = new JSONObject (jsonBuffer);
+
+                domainSearchedFor = new Domain (domainWithoutExtension, extensionOfDomain, jsonObject.getDouble ("price_per_year"), domainSearchedForAvailabillity);
 
                 int timesRan = 0;
 
