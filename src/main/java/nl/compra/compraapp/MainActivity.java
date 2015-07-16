@@ -55,6 +55,20 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    public void sortOnDomains (DomainSortingModes sortingMode)
+    {
+
+
+
+    }
+
+    public void sortOnExtensions (ExtensionSortingModes sortingMode)
+    {
+
+
+
+    }
+
     public void intializeExtensions () {
 
         Log.d ("Bob", "domainzzzzzzzzzz");
