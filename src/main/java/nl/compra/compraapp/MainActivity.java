@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
 
         Log.d ("Bob", "domainzzzzzzzzzz");
 
-        if (!applicationExtensions.isEmpty ()) {
+        if ( ! applicationExtensions.isEmpty ()) {
 
             // Iterates through all found domains
             Iterator<Extension> extensionListIterator = applicationExtensions.iterator ();
