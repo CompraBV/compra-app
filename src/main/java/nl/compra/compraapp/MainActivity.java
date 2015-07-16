@@ -49,21 +49,17 @@ public class MainActivity extends ActionBarActivity {
     private String actualDomainSearchedFor;
     private boolean domainSearchedForAvailabillity;
     private Domain domainSearchedFor;
+    private DomainFilters domainFilter;
 
     public MainActivity () {
 
+        // Default filter for all domains
+        domainFilter = DomainFilters.ALL;
         applicationExtensions = new ArrayList<Extension> ();
 
     }
 
-    public void filterDomains (DomainFilters sortingMode)
-    {
-
-
-
-    }
-
-    public void sortOnExtensions (ExtensionSorting sortingMode)
+    public void updateFilter ()
     {
 
 
@@ -133,8 +129,7 @@ public class MainActivity extends ActionBarActivity {
 
                 }
 
-                TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
-                table.addView (newRow);
+                appendToTable (newRow);
 
             }
 
@@ -194,6 +189,14 @@ public class MainActivity extends ActionBarActivity {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show ();
+
+    }
+
+    private void appendToTable (View newRow)
+    {
+
+        TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
+        table.addView (newRow);
 
     }
 
@@ -475,9 +478,7 @@ public class MainActivity extends ActionBarActivity {
 
                 }
 
-
-                TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
-                table.addView (newRow);
+                appendToTable (newRow);
 
             }
 
