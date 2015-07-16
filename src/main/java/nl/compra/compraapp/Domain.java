@@ -10,6 +10,13 @@ public class Domain {
     private double  price;
     private boolean available;
 
+    public String   getLiteralDomain ()     { return literalDomain; }
+    public String   getLiteralExtension ()  { return literalExtension; }
+    public String   getFullDomain ()        { return literalDomain + "." + literalExtension; }
+    public double   getPrice ()             { return price; }
+    public boolean  isAvailable ()          { return available; }
+
+
     public Domain (String literalDomain, String literalExtension, double price, boolean available)
     {
 
