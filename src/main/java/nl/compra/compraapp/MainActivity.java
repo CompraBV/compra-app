@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,14 +56,14 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    public void sortOnDomains (DomainSortingModes sortingMode)
+    public void filterDomains (DomainFilters sortingMode)
     {
 
 
 
     }
 
-    public void sortOnExtensions (ExtensionSortingModes sortingMode)
+    public void sortOnExtensions (ExtensionSorting sortingMode)
     {
 
 
@@ -71,8 +72,10 @@ public class MainActivity extends ActionBarActivity {
 
     public void intializeExtensions () {
 
-        Log.d ("Bob", "domainzzzzzzzzzz");
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+        View newRow;
 
+        // Now do the standard list
         if ( ! applicationExtensions.isEmpty ()) {
 
             // Iterates through all found domains
@@ -82,11 +85,11 @@ public class MainActivity extends ActionBarActivity {
                 // Get the next iteration
                 Extension extensionIt = extensionListIterator.next ();
 
-                LayoutInflater layoutInflater;
-                layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+//                LayoutInflater layoutInflater;
+//                layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
 
                 // Add a new domain_row
-                View newRow = layoutInflater.inflate (R.layout.domain_row, null);
+                newRow = layoutInflater.inflate (R.layout.domain_row, null);
 
                 // Attempt to change the text of the domain_row layout to the corresponding domain
                 TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
@@ -200,7 +203,7 @@ public class MainActivity extends ActionBarActivity {
         Context context = getApplicationContext ();
         int duration = length;
 
-        Toast toast = Toast.makeText (context, message, duration); // < Ignore this error.
+        Toast toast = Toast.makeText (context, message, duration); // < Ignore this error, it's not an error.
 
         toast.show ();
 
@@ -248,6 +251,9 @@ public class MainActivity extends ActionBarActivity {
                 if (searchEditText.getText ().toString ().equals ("")) {
 
                     clearDomains ();
+                    domainSearchedFor = null;
+                    actualDomainSearchedFor = null;
+                    domainSearchedForAvailabillity = false;
                     new ExtensionInitializer ().execute ();
 
                 }
@@ -331,6 +337,64 @@ public class MainActivity extends ActionBarActivity {
     {
 
         clearDomains ();
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+
+        if (domainSearchedFor != null && domainSearchedFor instanceof Domain) {
+
+            Log.d ("Bob", "domainzzzzzzzzzz");
+
+            // Do the searched for domain first if it exists
+            // Add a new domain_row
+            TableRow newRow = (TableRow) layoutInflater.inflate (R.layout.domain_row, null);
+
+            // Attempt to change the text of the domain_row layout to the corresponding domain
+            TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
+            domeinRowText.setText (domainSearchedFor.getFullDomain ());
+
+            Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+            String euroSign = "\u20ac";
+
+//        Long now = System.currentTimeMillis ();
+//        Date dateOfToday = new Date (now);
+//
+//        Date domainOfferDateBegin = null;
+//        Date domainOfferDateEnd = null;
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
+//        try {
+//            domainOfferDateBegin = sdf.parse (extensionIt.getSpecialOfferDateBegin ());
+//            domainOfferDateEnd = sdf.parse (extensionIt.getSpecialOfferDateEnd ());
+//        } catch (ParseException e) {
+//            e.printStackTrace ();
+//        }
+//
+//        if (dateOfToday.after (domainOfferDateBegin) && dateOfToday.before (domainOfferDateEnd)) {
+//
+//            Log.d ("Bob", "THE DOMAIN " + extensionIt.getTld () + " IS ON SAAAAAAALE #STEAMSALE #PRAISEGABEN the new price is " + extensionIt.getSpecialPrice ());
+//
+//            String originalPrice = euroSign + " " + extensionIt.getPricePerYear () + "0";
+//            String salePrice = euroSign + " " + extensionIt.getSpecialPrice () + "0";
+//
+//            domeinPriceButton.setText (salePrice);
+////                    domeinPriceButton.setText (originalPrice + " " + salePrice, TextView.BufferType.SPANNABLE);
+//
+////                    Spannable spannable = (Spannable) domeinPriceButton.getText();
+////                    spannable.setSpan (STRIKE_THROUGH_SPAN, 0, originalPrice.length (), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+////                    domeinPriceButton.setPaintFlags (domeinPriceButton.getPaintFlags () | Paint.STRIKE_THRU_TEXT_FLAG); // this works but it strikes all through
+//
+//        } else {
+//
+            domeinPriceButton.setText (euroSign + " " + domainSearchedFor.getPrice () + "0");
+//
+//        }
+
+            TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
+            table.addView (newRow);
+
+            Log.d ("Bob", "Hopefully the domain " + domainSearchedFor.getFullDomain () + " was added to the list.");
+
+        }
 
         if (!applicationExtensions.isEmpty () && actualDomainSearchedFor != null) {
 
@@ -341,7 +405,6 @@ public class MainActivity extends ActionBarActivity {
                 // Get the next iteration
                 Extension extensionIt = extensionListIterator.next ();
 
-                LayoutInflater layoutInflater;
                 layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
 
                 // Add a new domain_row
@@ -412,8 +475,6 @@ public class MainActivity extends ActionBarActivity {
             Log.d ("Bob", "domainList is very empty.");
 
         }
-
-        actualDomainSearchedFor = null;
 
     }
 
