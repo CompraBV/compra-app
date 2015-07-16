@@ -385,7 +385,18 @@ public class MainActivity extends ActionBarActivity {
 //
 //        } else {
 //
-            domeinPriceButton.setText (euroSign + " " + domainSearchedFor.getPrice () + "0");
+            if (domainSearchedFor.isAvailable ())
+            {
+
+                domeinPriceButton.setText (euroSign + " " + domainSearchedFor.getPrice () + "0");
+
+            }
+            else
+            {
+
+                domeinPriceButton.setText ("BEZET");
+
+            }
 //
 //        }
 
