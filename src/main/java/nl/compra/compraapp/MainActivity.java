@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,20 +50,21 @@ public class MainActivity extends ActionBarActivity {
     private String actualDomainSearchedFor;
     private boolean domainSearchedForAvailabillity;
     private Domain domainSearchedFor;
-    private DomainFilters domainFilter;
+    private DomainFilterType domainFilter;
 
     public MainActivity () {
 
         // Default filter for all domains
-        domainFilter = DomainFilters.ALL;
-        applicationExtensions = new ArrayList<Extension> ();
+        domainFilter = DomainFilterType.ALL;
+        applicationExtensions = new ArrayList <Extension> ();
 
     }
 
-    public void updateFilter ()
+    public void updateFilter (DomainFilterType filter)
     {
 
-
+        domainFilter = filter;
+        new UpdateExtensions ().execute ();
 
     }
 
@@ -73,6 +75,8 @@ public class MainActivity extends ActionBarActivity {
 
         // Now do the standard list
         if ( ! applicationExtensions.isEmpty ()) {
+
+
 
             // Iterates through all found domains
             Iterator<Extension> extensionListIterator = applicationExtensions.iterator ();
@@ -209,6 +213,68 @@ public class MainActivity extends ActionBarActivity {
         Toast toast = Toast.makeText (context, message, duration); // < Ignore this error, it's not an error.
 
         toast.show ();
+
+    }
+
+    @Override
+    protected void onStart ()
+    {
+
+        Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
+        spinnerDomeinen.setSelection (0, false); // This prevents the spinner from firing it's listeners on start up.
+        spinnerDomeinen.setOnItemSelectedListener (new AdapterView.OnItemSelectedListener () {
+            @Override
+            public void onItemSelected (AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position)
+                {
+
+                    default:
+                        notifyUser ("Something went horribly wrong. Please contact Compra at info@compra.nl");
+                        Log.d ("Bob", "DEFAULT CASE TRIGGERED IN SWITCH FOR SPINNER POSITION. SHEEEEIIIT.");
+                        break;
+
+                    case 0:
+                        updateFilter (DomainFilterType.ALL);
+                        break;
+
+                    case 1:
+                        updateFilter (DomainFilterType.POPULAR);
+                        break;
+
+                    case 2:
+                        updateFilter (DomainFilterType.NEW);
+                        break;
+
+                    case 3:
+                        updateFilter (DomainFilterType.EUROPE);
+                        break;
+
+                    case 4:
+                        updateFilter (DomainFilterType.COUNTRIES);
+                        break;
+
+                    case 5:
+                        updateFilter (DomainFilterType.COMMON);
+                        break;
+
+                    case 6:
+                        updateFilter (DomainFilterType.SPECIAL_OFFERS);
+                        break;
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected (AdapterView<?> parent) {
+
+                toastUser ("I'm a little kitty cat.", Toast.LENGTH_SHORT);
+
+            }
+        });
+
+        super.onStart ();
 
     }
 
@@ -579,7 +645,113 @@ public class MainActivity extends ActionBarActivity {
 
             Log.d ("Bob", "Extensions have been initialized");
 
-            intializeExtensions ();
+            initializeExtensions ();
+
+        }
+
+    }
+
+    public class UpdateExtensions extends AsyncTask<String, String, String> {
+
+        private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
+        private String jsonShit;
+
+        @Override
+        protected void onPreExecute ()
+        {
+
+            toastUser ("Loading extensions...", Toast.LENGTH_SHORT);
+
+        }
+
+        @Override
+        protected String doInBackground (String... params) {
+
+            Log.d ("Bob", "Hello this is the ExtensionInitializer.");
+
+            try {
+
+                jsonShit = getUrlSource (URL);
+
+            } catch (IOException e) {
+
+                Log.d ("Bob", "jsonBuffer wilt niet getUrlSource() doen.");
+                e.printStackTrace ();
+
+            }
+
+            JSONObject jsonObject = null;
+            try {
+
+                jsonObject = new JSONObject (jsonShit);
+                JSONArray jsonArray = jsonObject.getJSONArray ("items");
+
+
+                // Exists for debugging purposes
+//                Log.d ("Bob", "Ik ga nu gezellig de hele jsonarray af");
+//                for (int i = 0; i < jsonArray.length (); i++)
+//                {
+//
+//                    Log.d ("Bob", jsonArray.get (i).toString ());
+//
+//                }
+
+                List<Extension> localExtensionList;
+                localExtensionList = new ArrayList<Extension> ();
+//                for (int i = 0; i < jsonArray.length (); i++) {
+                for (int i = 0; i < MAX_AMOUNT_OF_DOMAINS; i++) {
+
+                    // Create the JSON data object
+                    JSONObject domainObj = jsonArray.getJSONObject (i);
+
+                    int id = domainObj.getInt ("id");
+                    String tld = domainObj.getString ("tld");
+                    double pricePerYear = domainObj.getDouble ("price_per_year");
+                    int popular = domainObj.getInt ("popular");
+                    int newDomain = domainObj.getInt ("new");
+                    String region = domainObj.getString ("region");
+                    String restriction = domainObj.getString ("restriction");
+                    String specialOfferDateBegin = domainObj.getString ("special_offer_begin");
+                    String specialOfferDateEnd = domainObj.getString ("special_offer_end");
+                    double specialPrice = domainObj.getDouble ("special_offer_price");
+
+                    localExtensionList.add (new Extension (id, tld, pricePerYear, popular, newDomain, region, restriction, specialOfferDateBegin, specialOfferDateEnd, specialPrice));
+
+//                    localExtensionList.put (domain, price);
+
+                }
+
+                Log.d ("Bob", "ExtensionInitializer successfully completed the domainList Map.");
+                applicationExtensions = localExtensionList;
+
+            } catch (JSONException e) {
+
+                Log.d ("Bob", "COMPRA API ADAPTER FAILED");
+                e.printStackTrace ();
+
+            }
+
+            return "Executed";
+
+        }
+
+        @Override
+        protected void onPostExecute (String string) {
+
+            Log.d ("Bob", "Extensions have been updated");
+
+            // Apply the filter
+            applicationExtensions = new DomainFilter (applicationExtensions, domainFilter).filter ();
+
+            if (domainSearchedFor instanceof Domain)
+                reinitializeExtensionsWithFoundDomain ();
+            else
+            {
+
+                clearDomains ();
+                initializeExtensions ();
+
+            }
 
         }
 
