@@ -3,6 +3,7 @@ package nl.compra.compraapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -196,6 +198,15 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    public void triggerLoginActivity (View view)
+    {
+
+        Intent loginIntent = new Intent(this, LoginActivity.class);
+        startActivity(loginIntent);
+
+
+    }
+
     private void appendToTable (View newRow)
     {
 
@@ -299,6 +310,17 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+
+        ImageButton loginActivityButton = (ImageButton) findViewById (R.id.loginActivityButton);
+        loginActivityButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+                triggerLoginActivity (v);
+
+            }
+        });
+
 
         final EditText searchEditText = (EditText) findViewById (R.id.searchEditText);
 

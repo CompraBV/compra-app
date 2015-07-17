@@ -62,12 +62,13 @@
     <ImageButton
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton2"
+        android:id="@+id/loginActivityButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignBottom="@+id/imageView"
-        android:src="@drawable/ic_action_person" />
+        android:src="@drawable/ic_action_person"
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
