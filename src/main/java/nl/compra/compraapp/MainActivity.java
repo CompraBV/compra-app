@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    public void intializeExtensions () {
+    public void initializeExtensions () {
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
         View newRow;
