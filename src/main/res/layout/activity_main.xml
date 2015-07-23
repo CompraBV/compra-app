@@ -130,7 +130,7 @@
         android:layout_width="57dp"
         android:layout_height="57dp"
         android:id="@+id/imageView"
-        android:background="@drawable/compra_icon_big"
+        android:background="@drawable/logo_128"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 
