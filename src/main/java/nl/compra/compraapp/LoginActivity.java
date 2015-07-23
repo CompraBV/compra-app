@@ -1,5 +1,8 @@
 package nl.compra.compraapp;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
+import java.util.List;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -54,7 +58,7 @@ public class LoginActivity extends ActionBarActivity {
         });
 
         Button loginButton = (Button) findViewById (R.id.loginButton);
-        tvFp.setOnClickListener (new View.OnClickListener () {
+        loginButton.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View v) {
 
@@ -65,8 +69,26 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
+    private void notifyUser (String message)
+    {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show ();
+
+    }
+
     public void login (View view)
     {
+
+        Log.d ("Bob", "LOGIN BOOTAAAN");
 
         EditText emailEditText      = (EditText) findViewById (R.id.emailEditText);
         EditText passwordEditText   = (EditText) findViewById (R.id.passwordEditText);
@@ -74,7 +96,7 @@ public class LoginActivity extends ActionBarActivity {
         String emailInput       = emailEditText.getText ().toString ();
         String passwordInput    = passwordEditText.getText ().toString ();
 
-        new LoginTask ().execute ();
+        new LoginTask ().execute (emailInput, passwordInput);
 
     }
 
@@ -97,7 +119,37 @@ public class LoginActivity extends ActionBarActivity {
     {
 
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse ("https://www.compra.nl/wachtwoord-vergeten"));
-        startActivity(browserIntent);
+        startActivity (browserIntent);
+
+    }
+
+    private void toastUser (String message, final int length)
+    {
+
+        Context context = getApplicationContext ();
+        int duration = length;
+
+        Toast toast = Toast.makeText (context, message, duration); // < Ignore this error, it's not an error.
+
+        toast.show ();
+
+    }
+
+    private void loginAftermath () {
+
+        if (UserManager.getCurrentlySignedInUser () == null)
+        {
+
+            notifyUser ("Foute inlog gegevens");
+
+        }
+        else
+        {
+
+            toastUser ("U bent successvol ingelogd", Toast.LENGTH_SHORT);
+            this.finish ();
+
+        }
 
     }
 
@@ -138,15 +190,54 @@ public class LoginActivity extends ActionBarActivity {
 
     public class LoginTask extends AsyncTask<String, String, String> {
 
-        private String url = "https://www.compra.nl/?c=api&m=checkDomain&domein=";
+        private String url;
         private String jsonBuffer;
 
         @Override
         protected String doInBackground (String... params) {
 
+            url = "https://www.compra.nl/?c=api&m=login&email=" + params[0] + "&password=" + params[1];
+
+            Log.d ("Bob", "Attempted login");
+
             try {
 
-                jsonBuffer = getUrlSource (url + params[0]);
+                jsonBuffer = getUrlSource (url);
+
+                if (jsonBuffer.toString ().equals ("false"))
+                {
+
+                    Log.d ("Bob", "False login");
+
+                }
+                else
+                {
+
+                    JSONObject jsonObject = null;
+                    try {
+
+                        jsonObject = new JSONObject (jsonBuffer);
+
+                        int id = jsonObject.getInt ("id");
+                        String firstname = jsonObject.getString ("firstname");
+                        String lastname = jsonObject.getString ("lastname");
+                        String email = jsonObject.getString ("email");
+
+                        User user = new User (id, firstname, lastname, email);
+
+                        UserManager.setCurrentlySignedInUser (user);
+
+                        Log.d ("Bob", "True login");
+
+                    } catch (JSONException e) {
+
+                        Log.d ("Bob", "Shit has indefinitely hit the fan but that doesn't matter because we USE the error :D.");
+
+                        e.printStackTrace ();
+                    }
+
+                }
+
 
             } catch (IOException e) {
 
@@ -155,15 +246,7 @@ public class LoginActivity extends ActionBarActivity {
 
             }
 
-            JSONObject jsonObject = null;
-            try {
 
-                jsonObject = new JSONObject (jsonBuffer);
-
-
-            } catch (JSONException e) {
-                e.printStackTrace ();
-            }
 
             return null;
 
@@ -173,10 +256,11 @@ public class LoginActivity extends ActionBarActivity {
         protected void onPostExecute (String string)
         {
 
-
+            loginAftermath ();
 
         }
 
     }
+
 
 }
