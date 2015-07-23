@@ -202,7 +202,7 @@ public class MainActivity extends ActionBarActivity {
     {
 
         Intent loginIntent = new Intent(this, LoginActivity.class);
-        startActivity(loginIntent);
+        startActivity (loginIntent);
 
 
     }
