@@ -1,5 +1,6 @@
 package nl.compra.compraapp;
 
+import android.accounts.Account;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,16 +46,20 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final StrikethroughSpan STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
-    private static final int MAX_AMOUNT_OF_DOMAINS = 10;
+    private static final StrikethroughSpan  STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
+    private static final int                MAX_AMOUNT_OF_DOMAINS = 10;
 
-    private List <Extension> applicationExtensions;
-    private String actualDomainSearchedFor;
-    private boolean domainSearchedForAvailabillity;
-    private Domain domainSearchedFor;
-    private DomainFilterType domainFilter;
+    private List <Extension>    applicationExtensions;
+    private String              actualDomainSearchedFor;
+    private boolean             domainSearchedForAvailabillity;
+    private Domain              domainSearchedFor;
+    private DomainFilterType    domainFilter;
 
     public MainActivity () {
+
+        // THIS EXISTS FOR TESTING PURPOSES
+        // TODO remove this when done testing
+//        UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
 
         // Default filter for all domains
         domainFilter = DomainFilterType.ALL;
@@ -201,8 +206,18 @@ public class MainActivity extends ActionBarActivity {
     public void triggerLoginActivity (View view)
     {
 
-        Intent loginIntent = new Intent(this, LoginActivity.class);
-        startActivity (loginIntent);
+        if (UserManager.getCurrentlySignedInUser () instanceof User)
+        {
+
+            Intent accountIntent = new Intent (this, AccountActivity.class);
+            startActivity (accountIntent);
+
+        } else {
+
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            startActivity (loginIntent);
+
+        }
 
 
     }
