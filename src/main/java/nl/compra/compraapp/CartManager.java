@@ -10,7 +10,8 @@ public class CartManager {
 
     public static List<Domain> cart = new ArrayList<Domain> ();
 
-    public static Domain get (int index) { return cart.get (index); }
+    public static List<Domain> getCart ()   { return cart; }
+    public static Domain get (int index)    { return cart.get (index); }
 
     public static void addToCart (Domain domain) { cart.add (domain); }
 

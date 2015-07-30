@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -12,8 +13,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -44,7 +48,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuItemClickListener {
 
     private static final StrikethroughSpan  STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
     private static final int                MAX_AMOUNT_OF_DOMAINS = 10;
@@ -59,11 +63,11 @@ public class MainActivity extends ActionBarActivity {
 
         // THIS EXISTS FOR TESTING PURPOSES
         // TODO remove this when done testing
-//        UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
+        UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
 
         // Default filter for all domains
         domainFilter = DomainFilterType.ALL;
-        applicationExtensions = new ArrayList <Extension> ();
+        applicationExtensions = new ArrayList<Extension> ();
 
     }
 
@@ -230,6 +234,40 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    private void menuButtonTrigger (View v) {
+
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        popup.setOnMenuItemClickListener (this);
+        inflater.inflate(R.menu.menu, popup.getMenu());
+        popup.show();
+
+    }
+
+//    @Override
+    public boolean onMenuItemClick(MenuItem item)
+    {
+
+        switch (item.getItemId())
+        {
+
+            case R.id.optionContact:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse ("http://www.compra.nl/contact"));
+                startActivity(browserIntent);
+                return true;
+
+            case R.id.optionOfferte:
+                Intent browserIntent2 = new Intent(Intent.ACTION_VIEW, Uri.parse ("http://www.compra.nl/#offerte"));
+                startActivity(browserIntent2);
+                return true;
+
+            default:
+                return false;
+
+        }
+
+    }
+
     private void toastUser (String message, final int length)
     {
 
@@ -295,7 +333,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onNothingSelected (AdapterView<?> parent) {
 
-                toastUser ("I'm a little kitty cat.", Toast.LENGTH_SHORT);
+                toastUser ("I'm a fluffy little kitty cat.", Toast.LENGTH_SHORT);
 
             }
         });
@@ -336,6 +374,15 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        ImageButton menuButton = (ImageButton) findViewById (R.id.menuButton);
+        menuButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+               menuButtonTrigger (v);
+
+            }
+        });
 
         final EditText searchEditText = (EditText) findViewById (R.id.searchEditText);
 
@@ -390,6 +437,7 @@ public class MainActivity extends ActionBarActivity {
         spinnerSorteringen.setAdapter (adapterrrrrrrrrrr);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
