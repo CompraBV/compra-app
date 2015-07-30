@@ -240,7 +240,15 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         MenuInflater inflater = popup.getMenuInflater();
         popup.setOnMenuItemClickListener (this);
         inflater.inflate(R.menu.menu, popup.getMenu());
-        popup.show();
+        popup.show ();
+
+    }
+
+    private void cartButtonTrigger (View v)
+    {
+
+        Intent intent = new Intent (this, CartActivity.class);
+        startActivity (intent);
 
     }
 
@@ -331,11 +339,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             }
 
             @Override
-            public void onNothingSelected (AdapterView<?> parent) {
+            public void onNothingSelected (AdapterView<?> parent)
+            {
 
                 toastUser ("I'm a fluffy little kitty cat.", Toast.LENGTH_SHORT);
 
             }
+
         });
 
         super.onStart ();
@@ -380,6 +390,16 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             public void onClick (View v) {
 
                menuButtonTrigger (v);
+
+            }
+        });
+
+        ImageButton cartButton = (ImageButton) findViewById (R.id.cartButton);
+        cartButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+                cartButtonTrigger (v);
 
             }
         });
@@ -506,6 +526,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             domeinRowText.setText (domainSearchedFor.getFullDomain ());
 
             Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+
             String euroSign = "\u20ac";
 
 //        Long now = System.currentTimeMillis ();
@@ -629,6 +650,12 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                 }
 
+                domainPriceButton.setOnClickListener (new View.OnClickListener () {
+                    @Override
+                    public void onClick (View v) {
+
+                    }
+                });
                 appendToTable (newRow);
 
             }

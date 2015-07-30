@@ -38,14 +38,17 @@
             android:layout_toRightOf="@+id/searchEditText"
             android:layout_toEndOf="@+id/searchEditText" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button2"
+        <ImageButton
+            android:layout_width="100dp"
+            android:layout_height="55dp"
+            android:id="@+id/cartButton"
             android:text="CART"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/domainSearchButton"
-            android:layout_toEndOf="@+id/domainSearchButton" />
+            android:layout_toEndOf="@+id/domainSearchButton"
+            android:focusable="true"
+            android:src="@drawable/winkelwagen"
+            android:scaleType="fitCenter"/>
 
     </RelativeLayout>
 
