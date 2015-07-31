@@ -1,9 +1,19 @@
 package nl.compra.compraapp;
 
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.Iterator;
 
 
 public class CartActivity extends ActionBarActivity {
@@ -12,6 +22,45 @@ public class CartActivity extends ActionBarActivity {
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_cart);
+
+    }
+
+    @Override
+    protected void onResume ()
+    {
+
+        super.onResume ();
+        initialize ();
+
+    }
+
+    private void initialize ()
+    {
+
+        TableLayout cartTable = (TableLayout) findViewById (R.id.winkelwagenTableLayout);
+        cartTable.removeAllViews ();
+
+        Iterator<Domain> cartIterator = CartManager.getCart ().iterator ();
+        while (cartIterator.hasNext ())
+        {
+
+            Domain cartIt = cartIterator.next ();
+
+            LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+            View newRow = newRow = layoutInflater.inflate (R.layout.domain_row, null);
+
+            Button dpb  = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+            TextView tv = (TextView) newRow.findViewById (R.id.domeinRowText);
+
+            String euroSign = "\u20ac";
+
+            dpb.setText (euroSign + " " + cartIt.getPrice () + "0");
+            tv.setText (cartIt.getFullDomain ());
+
+            cartTable.addView (newRow);
+
+        }
+
     }
 
     @Override

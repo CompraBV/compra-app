@@ -1,5 +1,7 @@
 package nl.compra.compraapp;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,12 @@ public class CartManager {
     public static List<Domain> getCart ()   { return cart; }
     public static Domain get (int index)    { return cart.get (index); }
 
-    public static void addToCart (Domain domain) { cart.add (domain); }
+    public static void addToCart (Domain domain)
+    {
+
+        Log.d ("Bob", "Domain was added to cart: " + domain);
+        cart.add (domain);
+
+    }
 
 }

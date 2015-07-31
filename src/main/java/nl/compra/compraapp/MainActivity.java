@@ -1,6 +1,5 @@
 package nl.compra.compraapp;
 
-import android.accounts.Account;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,7 +12,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,17 +51,18 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     private static final StrikethroughSpan  STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
     private static final int                MAX_AMOUNT_OF_DOMAINS = 10;
 
-    private List <Extension>    applicationExtensions;
-    private String              actualDomainSearchedFor;
-    private boolean             domainSearchedForAvailabillity;
-    private Domain              domainSearchedFor;
-    private DomainFilterType    domainFilter;
+    private static List <Extension>     applicationExtensions;
+    private String                      literalDomainSearchedFor;
+    private boolean                     domainSearchedForAvailabillity;
+    private Domain                      domainSearchedFor;
+    private DomainFilterType            domainFilter;
 
     public MainActivity () {
 
         // THIS EXISTS FOR TESTING PURPOSES
         // TODO remove this when done testing
         UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
+        CartManager.addToCart (new Domain ("kaas", "kitty", 2.00, true));
 
         // Default filter for all domains
         domainFilter = DomainFilterType.ALL;
@@ -172,9 +171,9 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         {
 
             clearDomains ();
-            actualDomainSearchedFor = domain;
+            literalDomainSearchedFor = domain;
 
-            Log.d ("Bob", "User is searching by the domain: " + actualDomainSearchedFor);
+            Log.d ("Bob", "User is searching by the domain: " + literalDomainSearchedFor);
             new CheckIfDomainAvailable ().execute (domain);
 
         }
@@ -425,7 +424,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                     clearDomains ();
                     domainSearchedFor = null;
-                    actualDomainSearchedFor = null;
+                    literalDomainSearchedFor = null;
                     domainSearchedForAvailabillity = false;
                     new ExtensionInitializer ().execute ();
 
@@ -513,7 +512,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         clearDomains ();
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
 
-        if (domainSearchedFor != null && domainSearchedFor instanceof Domain) {
+        if (domainSearchedFor instanceof Domain) {
 
             Log.d ("Bob", "domainzzzzzzzzzz");
 
@@ -526,6 +525,27 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             domeinRowText.setText (domainSearchedFor.getFullDomain ());
 
             Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+
+            domeinPriceButton.setOnClickListener (new View.OnClickListener () {
+                @Override
+                public void onClick (View v) {
+
+                    Log.d ("Bob", "CLICKEDEE CLOO");
+                    toastUser ("Domein is toegevoegd aan uw winkelwagen.", Toast.LENGTH_SHORT);
+
+                    CartManager.addToCart
+                    (
+                        new Domain
+                        (
+                            domainSearchedFor.getLiteralDomain (),
+                            domainSearchedFor.getLiteralExtension (),
+                            domainSearchedFor.getPrice (),
+                            true
+                        )
+                    );
+
+                }
+            });
 
             String euroSign = "\u20ac";
 
@@ -582,14 +602,14 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         }
 
-        if (!applicationExtensions.isEmpty () && actualDomainSearchedFor != null) {
+        if (!applicationExtensions.isEmpty () && literalDomainSearchedFor != null) {
 
             // Iterates through all found domains
             Iterator<Extension> extensionListIterator = applicationExtensions.iterator ();
             while (extensionListIterator.hasNext ()) {
 
                 // Get the next iteration
-                Extension extensionIt = extensionListIterator.next ();
+                final Extension extensionIt = extensionListIterator.next ();
 
                 layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
 
@@ -598,10 +618,30 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                 // Attempt to change the text of the domain_row layout to the corresponding domain
                 TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
-                domeinRowText.setText ((actualDomainSearchedFor.substring (0, actualDomainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
-
+                domeinRowText.setText ((literalDomainSearchedFor.substring (0, literalDomainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
 
                 Button domainPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+                domainPriceButton.setOnClickListener (new View.OnClickListener () {
+                    @Override
+                    public void onClick (View v) {
+
+                    Log.d ("Bob", "CLICKEDEE CLOO");
+                    toastUser ("Domein is toegevoegd aan uw winkelwagen.", Toast.LENGTH_SHORT);
+
+                    CartManager.addToCart
+                    (
+                        new Domain
+                        (
+                            domainSearchedFor.getLiteralDomain (),
+                            extensionIt.getTld (),
+                            extensionIt.getPricePerYear (),
+                            true
+                        )
+                    );
+
+                    }
+                });
+
                 String euroSign = "\u20ac";
 
                 Long now = System.currentTimeMillis ();
@@ -650,12 +690,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                 }
 
-                domainPriceButton.setOnClickListener (new View.OnClickListener () {
-                    @Override
-                    public void onClick (View v) {
-
-                    }
-                });
                 appendToTable (newRow);
 
             }
