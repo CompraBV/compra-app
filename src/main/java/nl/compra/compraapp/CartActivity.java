@@ -3,13 +3,16 @@ package nl.compra.compraapp;
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -17,6 +20,8 @@ import java.util.Iterator;
 
 
 public class CartActivity extends ActionBarActivity {
+
+    private int iterations;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -34,23 +39,53 @@ public class CartActivity extends ActionBarActivity {
 
     }
 
+    private void toastUser (String message, final int length)
+    {
+
+        Context context = getApplicationContext ();
+        int duration = length;
+
+        Toast toast = Toast.makeText (context, message, duration); // < Ignore this error, it's not an error.
+
+        toast.show ();
+
+    }
+
     private void initialize ()
     {
 
         TableLayout cartTable = (TableLayout) findViewById (R.id.winkelwagenTableLayout);
         cartTable.removeAllViews ();
 
+        iterations = 0;
         Iterator<Domain> cartIterator = CartManager.getCart ().iterator ();
         while (cartIterator.hasNext ())
         {
 
-            Domain cartIt = cartIterator.next ();
+            final Domain cartIt = cartIterator.next ();
 
             LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
-            View newRow = newRow = layoutInflater.inflate (R.layout.domain_row, null);
+            View newRow = newRow = layoutInflater.inflate (R.layout.domain_row_cart, null);
 
-            Button dpb  = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
-            TextView tv = (TextView) newRow.findViewById (R.id.domeinRowText);
+            Button dpb       = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+            ImageButton tc   = (ImageButton) newRow.findViewById (R.id.trashcanButton);
+            TextView tv      = (TextView) newRow.findViewById (R.id.domeinRowText);
+
+
+            tc.setOnClickListener (new View.OnClickListener () {
+
+                @Override
+                public void onClick (View v) {
+
+                    Log.d ("Bob", "Iterate value: " + iterations);
+                    CartManager.removeByFullDomain (cartIt.getFullDomain ());
+
+                    toastUser ("Het domein is verwijderd uit uw winkelwagen.", Toast.LENGTH_SHORT);
+                    initialize ();
+                    return;
+
+                }
+            });
 
             String euroSign = "\u20ac";
 
@@ -58,6 +93,7 @@ public class CartActivity extends ActionBarActivity {
             tv.setText (cartIt.getFullDomain ());
 
             cartTable.addView (newRow);
+            iterations++;
 
         }
 

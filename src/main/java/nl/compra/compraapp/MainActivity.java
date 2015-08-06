@@ -62,10 +62,10 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         // THIS EXISTS FOR TESTING PURPOSES
         // TODO remove this when done testing
         UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
-        CartManager.addToCart (new Domain ("kaas", "kitty", 2.00, true));
 
         // Default filter for all domains
         domainFilter = DomainFilterType.ALL;
+
         applicationExtensions = new ArrayList<Extension> ();
 
     }
@@ -449,11 +449,11 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         Spinner spinnerSorteringen = (Spinner) findViewById (R.id.sorteringen);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapterrrrrrrrrrr = ArrayAdapter.createFromResource (this, R.array.sort, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource (this, R.array.sort, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
-        adapterrrrrrrrrrr.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
+        adapter2.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinnerSorteringen.setAdapter (adapterrrrrrrrrrr);
+        spinnerSorteringen.setAdapter (adapter2);
 
     }
 
@@ -524,7 +524,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
             domeinRowText.setText (domainSearchedFor.getFullDomain ());
 
-            Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+            final Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
 
             domeinPriceButton.setOnClickListener (new View.OnClickListener () {
                 @Override
@@ -543,6 +543,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                             true
                         )
                     );
+
+                    domeinPriceButton.setText ("Toegevoegd");
 
                 }
             });
@@ -583,7 +585,10 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             if (domainSearchedFor.isAvailable ())
             {
 
-                domeinPriceButton.setText (euroSign + " " + domainSearchedFor.getPrice () + "0");
+                if (CartManager.isInCart (domainSearchedFor.getFullDomain ()))
+                    domeinPriceButton.setText ("In winkelwagen");
+                else
+                    domeinPriceButton.setText (euroSign + " " + domainSearchedFor.getPrice () + "0");
 
             }
             else
@@ -620,7 +625,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
                 domeinRowText.setText ((literalDomainSearchedFor.substring (0, literalDomainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
 
-                Button domainPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+                final Button domainPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
                 domainPriceButton.setOnClickListener (new View.OnClickListener () {
                     @Override
                     public void onClick (View v) {
@@ -638,6 +643,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                             true
                         )
                     );
+
+                    domainPriceButton.setText ("Toegevoegd");
 
                     }
                 });
@@ -711,7 +718,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         protected void onPreExecute ()
         {
 
-            toastUser ("Loading extensions...", Toast.LENGTH_SHORT);
+            toastUser ("Laden extensies...", Toast.LENGTH_SHORT);
 
         }
 
@@ -806,7 +813,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         protected void onPreExecute ()
         {
 
-            toastUser ("Loading extensions...", Toast.LENGTH_SHORT);
+            toastUser ("Laden extensies...", Toast.LENGTH_SHORT);
 
         }
 
@@ -903,85 +910,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
-    /*
-        This is unused and I don't really know if CheckIfDomainAvailable replaced it.
-        But to be safe I kinda just left it in.
-     */
-    public class ExtensionSearchOnDomain extends AsyncTask<String, String, String> {
-
-        private String url;
-        private String jsonShit;
-
-        @Override
-        protected String doInBackground (String... params) {
-
-            try {
-
-                String actualDomein = params[0];
-
-                url = "https://www.compra.nl/?c=api&m=checkDomain&domein=" + actualDomein;
-                jsonShit = getUrlSource (url);
-
-
-            } catch (IOException e) {
-
-                e.printStackTrace ();
-
-            }
-
-            JSONObject jsonObject = null;
-            try {
-
-                jsonObject = new JSONObject (jsonShit);
-                JSONArray jsonArray = jsonObject.getJSONArray ("items");
-
-                List<Extension> localExtensionList;
-                localExtensionList = new ArrayList<Extension> ();
-                for (int i = 0; i < jsonArray.length (); i++) {
-
-                    // Create the JSON data object
-                    JSONObject domainObj = jsonArray.getJSONObject (i);
-
-                    int id = domainObj.getInt ("id");
-                    String tld = domainObj.getString ("tld");
-                    double pricePerYear = domainObj.getDouble ("price_per_year");
-                    int popular = domainObj.getInt ("popular");
-                    int newDomain = domainObj.getInt ("new");
-                    String region = domainObj.getString ("region");
-                    String restriction = domainObj.getString ("restriction");
-                    String specialOfferDateBegin = domainObj.getString ("special_offer_begin");
-                    String specialOfferDateEnd = domainObj.getString ("special_offer_end");
-                    int specialPrice = domainObj.getInt ("special_offer_price");
-
-                    localExtensionList.add (new Extension (id, tld, pricePerYear, popular, newDomain, region, restriction, specialOfferDateBegin, specialOfferDateEnd, specialPrice));
-
-
-                }
-
-                Log.d ("Bob", "ExtensionSearchOnDomain successfully executed");
-                applicationExtensions = localExtensionList;
-
-            } catch (JSONException e) {
-
-                Log.d ("Bob", "ExtensionSearchOnDomain FAILED");
-                e.printStackTrace ();
-
-            }
-
-            return null;
-
-        }
-
-
-        @Override
-        protected void onPostExecute (String string) {
-
-            Log.d ("Bob", "Doe ik iets of ben ik meuilijk lui?");
-
-        }
-
-    }
-
     public class CheckIfDomainAvailable extends AsyncTask<String, String, String> {
 
         private String url = "https://www.compra.nl/?c=api&m=checkDomain&domein=";
@@ -991,7 +919,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         protected void onPreExecute ()
         {
 
-            toastUser ("Loading domains & extensions...", Toast.LENGTH_LONG);
+            toastUser ("Laden domeinen & extensies...", Toast.LENGTH_LONG);
 
         }
 

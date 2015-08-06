@@ -26,11 +26,27 @@
             android:layout_height="wrap_content"
             android:text="€1337,-"
             android:id="@+id/domeinRowOrderButton"
+            android:width="150dp"
+            android:layout_alignWithParentIfMissing="false"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:width="150dp"
-            android:layout_alignWithParentIfMissing="false"
-            />
+            android:layout_marginRight="56dp"
+            android:layout_marginEnd="56dp"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trashcanButton"
+            android:layout_alignLeft="@+id/domeinRowOrderButton"
+            android:layout_alignStart="@+id/domeinRowOrderButton"
+            android:layout_marginLeft="126dp"
+            android:layout_marginStart="126dp"
+            android:layout_alignBottom="@+id/domeinRowOrderButton"
+            android:layout_alignTop="@+id/domeinRowOrderButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/trashcan"
+            android:scaleType="centerCrop"/>
     </RelativeLayout>
 </TableRow>
