@@ -526,28 +526,23 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
             final Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
 
-            domeinPriceButton.setOnClickListener (new View.OnClickListener () {
-                @Override
-                public void onClick (View v) {
+            if (domainSearchedForAvailabillity) {
+
+                domeinPriceButton.setOnClickListener (new View.OnClickListener () {
+                    @Override
+                    public void onClick (View v) {
 
                     Log.d ("Bob", "CLICKEDEE CLOO");
                     toastUser ("Domein is toegevoegd aan uw winkelwagen.", Toast.LENGTH_SHORT);
 
-                    CartManager.addToCart
-                    (
-                        new Domain
-                        (
-                            domainSearchedFor.getLiteralDomain (),
-                            domainSearchedFor.getLiteralExtension (),
-                            domainSearchedFor.getPrice (),
-                            true
-                        )
-                    );
+                    CartManager.addToCart (new Domain (domainSearchedFor.getLiteralDomain (), domainSearchedFor.getLiteralExtension (), domainSearchedFor.getPrice (), true));
 
                     domeinPriceButton.setText ("Toegevoegd");
 
-                }
-            });
+                    }
+                });
+
+            }
 
             String euroSign = "\u20ac";
 
@@ -586,7 +581,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             {
 
                 if (CartManager.isInCart (domainSearchedFor.getFullDomain ()))
-                    domeinPriceButton.setText ("In winkelwagen");
+                    domeinPriceButton.setText ("Toegevoegd");
                 else
                     domeinPriceButton.setText (euroSign + " " + domainSearchedFor.getPrice () + "0");
 
@@ -626,28 +621,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 domeinRowText.setText ((literalDomainSearchedFor.substring (0, literalDomainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
 
                 final Button domainPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
-                domainPriceButton.setOnClickListener (new View.OnClickListener () {
-                    @Override
-                    public void onClick (View v) {
-
-                    Log.d ("Bob", "CLICKEDEE CLOO");
-                    toastUser ("Domein is toegevoegd aan uw winkelwagen.", Toast.LENGTH_SHORT);
-
-                    CartManager.addToCart
-                    (
-                        new Domain
-                        (
-                            domainSearchedFor.getLiteralDomain (),
-                            extensionIt.getTld (),
-                            extensionIt.getPricePerYear (),
-                            true
-                        )
-                    );
-
-                    domainPriceButton.setText ("Toegevoegd");
-
-                    }
-                });
 
                 String euroSign = "\u20ac";
 
@@ -668,6 +641,29 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 if (extensionIt.isAvailable ())
                 {
 
+                    domainPriceButton.setOnClickListener (new View.OnClickListener () {
+                        @Override
+                        public void onClick (View v) {
+
+                        Log.d ("Bob", "CLICKEDEE CLOO");
+                        toastUser ("Domein is toegevoegd aan uw winkelwagen.", Toast.LENGTH_SHORT);
+
+                        CartManager.addToCart
+                        (
+                            new Domain
+                            (
+                                domainSearchedFor.getLiteralDomain (),
+                                extensionIt.getTld (),
+                                extensionIt.getPricePerYear (),
+                                true
+                            )
+                        );
+
+                        domainPriceButton.setText ("Toegevoegd");
+
+                        }
+                    });
+
                     if (dateOfToday.after (domainOfferDateBegin) && dateOfToday.before (domainOfferDateEnd)) {
 
                         Log.d ("Bob", "THE DOMAIN " + extensionIt.getTld () + " IS ON SAAAAAAALE #STEAMSALE #PRAISEGABEN the new price is " + extensionIt.getSpecialPrice ());
@@ -685,6 +681,9 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                     } else {
 
+                        if (CartManager.isInCart (domainSearchedFor.getLiteralDomain () + "." + extensionIt.getTld ()))
+                            domainPriceButton.setText ("Toegevoegd");
+                            else
                         domainPriceButton.setText (euroSign + " " + extensionIt.getPricePerYear () + "0");
 
                     }
