@@ -77,12 +77,12 @@ public class CartActivity extends ActionBarActivity {
                 @Override
                 public void onClick (View v) {
 
-                    Log.d ("Bob", "Iterate value: " + iterations);
-                    CartManager.removeByFullDomain (cartIt.getFullDomain ());
+                Log.d ("Bob", "Iterate value: " + iterations);
+                CartManager.removeByFullDomain (cartIt.getFullDomain ());
 
-                    toastUser ("Het domein is verwijderd uit uw winkelwagen.", Toast.LENGTH_SHORT);
-                    initialize ();
-                    return;
+                toastUser ("Het domein is verwijderd uit uw winkelwagen.", Toast.LENGTH_SHORT);
+                initialize ();
+                return;
 
                 }
             });
