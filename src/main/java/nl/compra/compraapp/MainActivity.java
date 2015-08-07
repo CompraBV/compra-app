@@ -671,8 +671,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                         String originalPrice = euroSign + " " + extensionIt.getPricePerYear () + "0";
                         String salePrice = euroSign + " " + extensionIt.getSpecialPrice () + "0";
 
-                        domainPriceButton.setText (salePrice);
-    //                    domainPriceButton.setText (originalPrice + " " + salePrice, TextView.BufferType.SPANNABLE);
+//                        domainPriceButton.setText (salePrice);
+                        domainPriceButton.setText (originalPrice + " " + salePrice, TextView.BufferType.SPANNABLE);
 
     //                    Spannable spannable = (Spannable) domainPriceButton.getText();
     //                    spannable.setSpan (STRIKE_THROUGH_SPAN, 0, originalPrice.length (), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -683,8 +683,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                         if (CartManager.isInCart (domainSearchedFor.getLiteralDomain () + "." + extensionIt.getTld ()))
                             domainPriceButton.setText ("Toegevoegd");
-                            else
-                        domainPriceButton.setText (euroSign + " " + extensionIt.getPricePerYear () + "0");
+                        else
+                            domainPriceButton.setText (euroSign + " " + extensionIt.getPricePerYear () + "0");
 
                     }
 
