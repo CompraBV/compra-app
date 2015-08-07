@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -402,6 +403,9 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
             }
         });
+
+        AwesomeBobScroller scrollView = (AwesomeBobScroller) findViewById (R.id.scrollViewRowsThing);
+        // STUFF AND THINGS
 
         final EditText searchEditText = (EditText) findViewById (R.id.searchEditText);
 

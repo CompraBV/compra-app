@@ -78,13 +78,14 @@
         android:layout_height="match_parent"
         android:layout_marginTop="130dp">
 
-        <ScrollView
+        <nl.compra.compraapp.AwesomeBobScroller
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/scrollView"
+            android:id="@+id/scrollViewRowsThing"
             android:layout_gravity="center"
             android:nestedScrollingEnabled="true"
-            android:layout_below="@+id/sorteringen">
+            android:layout_below="@+id/sorteringen"
+            android:fillViewport="false">
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -100,7 +101,7 @@
 
 
             </TableLayout>
-        </ScrollView>
+        </nl.compra.compraapp.AwesomeBobScroller>
 
         <Spinner
             android:layout_width="match_parent"
