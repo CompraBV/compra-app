@@ -2,6 +2,7 @@ package nl.compra.compraapp;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 
@@ -24,13 +25,13 @@ public class AwesomeBobScroller extends ScrollView
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        View view = (View) getChildAt(getChildCount()-1);
+        View view = getChildAt(getChildCount()-1);
         int diff = (view.getBottom()-(getHeight()+getScrollY()));
 
         if (diff == 0 && mListener != null) {
             mListener.onBottomReached();
 
-            System.out.println ();
+            Log.d ("Bob", "We're at an all-time-low.");
 
         }
 
