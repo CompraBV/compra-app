@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class DomainFilter {
 
-    List <Extension> extensionList;
+    List<Extension> extensionList;
     DomainFilterType filterType;
 
     public DomainFilter (List <Extension> extensionList, DomainFilterType filterType)
@@ -24,10 +24,10 @@ public class DomainFilter {
 
     }
 
-    public List <Extension> filter ()
+    public List<Extension> filter ()
     {
 
-        Iterator <Extension> extensionIterator = extensionList.iterator ();
+        Iterator<Extension> extensionIterator = extensionList.iterator ();
         while (extensionIterator.hasNext ())
         {
 
