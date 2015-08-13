@@ -3,7 +3,7 @@ package nl.compra.compraapp;
 /**
  * Created by Bob Desaunois on 16-7-2015.
  */
-public enum DomainFilterType {
+public enum ExtensionFilterType {
 
     ALL,
     POPULAR,

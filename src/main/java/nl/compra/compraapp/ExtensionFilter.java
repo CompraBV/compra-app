@@ -11,12 +11,12 @@ import java.util.List;
 /**
  * Created by Bob Desaunois on 17-7-2015.
  */
-public class DomainFilter {
+public class ExtensionFilter {
 
     List<Extension> extensionList;
-    DomainFilterType filterType;
+    ExtensionFilterType filterType;
 
-    public DomainFilter (List <Extension> extensionList, DomainFilterType filterType)
+    public ExtensionFilter (List<Extension> extensionList, ExtensionFilterType filterType)
     {
 
         this.extensionList  = extensionList;
@@ -33,11 +33,20 @@ public class DomainFilter {
 
             Extension extensionIt = extensionIterator.next ();
 
+            // Filter out the searched for domain to prevent xX_DupliCateZz_Xx
+            if (MainActivity.domainSearchedFor instanceof Domain)
+            {
+
+                if (extensionIt.getTld ().equals (MainActivity.domainSearchedFor.getLiteralExtension ()))
+                    extensionIterator.remove ();
+
+            }
+
             switch (filterType)
             {
 
                 default:
-                    Log.d ("Bob", "Uh oh, DomainFilter had it's default value triggered in a switch :(");
+                    Log.d ("Bob", "Uh oh, ExtensionFilter had it's default value triggered in a switch :(");
                     break;
 
                 case ALL:

@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -52,11 +51,12 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     private static final StrikethroughSpan  STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
     private static final int                MAX_AMOUNT_OF_DOMAINS = 10;
 
-    private static List <Extension>     applicationExtensions;
-    private String                      literalDomainSearchedFor;
-    private boolean                     domainSearchedForAvailabillity;
-    private Domain                      domainSearchedFor;
-    private DomainFilterType            domainFilter;
+    public static  Domain                  domainSearchedFor;
+    private static  List <Extension>        applicationExtensions;
+    private         String                  literalDomainSearchedFor;
+    private         boolean                 domainSearchedForAvailabillity;
+    private ExtensionFilterType domainFilter;
+    private         ExtensionSortingType    extensionSorter;
 
     public MainActivity () {
 
@@ -65,16 +65,24 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
 
         // Default filter for all domains
-        domainFilter = DomainFilterType.ALL;
+        domainFilter = ExtensionFilterType.ALL;
 
         applicationExtensions = new ArrayList<Extension> ();
 
     }
 
-    public void updateFilter (DomainFilterType filter)
+    public void updateFilter (ExtensionFilterType filter)
     {
 
         domainFilter = filter;
+        new UpdateExtensions ().execute ();
+
+    }
+
+    public void updateSorter (ExtensionSortingType sorter)
+    {
+
+        extensionSorter = sorter;
         new UpdateExtensions ().execute ();
 
     }
@@ -307,31 +315,31 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                         break;
 
                     case 0:
-                        updateFilter (DomainFilterType.ALL);
+                        updateFilter (ExtensionFilterType.ALL);
                         break;
 
                     case 1:
-                        updateFilter (DomainFilterType.POPULAR);
+                        updateFilter (ExtensionFilterType.POPULAR);
                         break;
 
                     case 2:
-                        updateFilter (DomainFilterType.NEW);
+                        updateFilter (ExtensionFilterType.NEW);
                         break;
 
                     case 3:
-                        updateFilter (DomainFilterType.EUROPE);
+                        updateFilter (ExtensionFilterType.EUROPE);
                         break;
 
                     case 4:
-                        updateFilter (DomainFilterType.COUNTRIES);
+                        updateFilter (ExtensionFilterType.COUNTRIES);
                         break;
 
                     case 5:
-                        updateFilter (DomainFilterType.COMMON);
+                        updateFilter (ExtensionFilterType.COMMON);
                         break;
 
                     case 6:
-                        updateFilter (DomainFilterType.SPECIAL_OFFERS);
+                        updateFilter (ExtensionFilterType.SPECIAL_OFFERS);
                         break;
 
                 }
@@ -346,6 +354,45 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
             }
 
+        });
+
+        Spinner spinnerSorteringen = (Spinner) findViewById (R.id.sorteringen);
+        spinnerSorteringen.setSelection (0, false); // This prevents the spinner from firing it's listeners on start up.
+        spinnerSorteringen.setOnItemSelectedListener (new AdapterView.OnItemSelectedListener ()
+        {
+
+            @Override
+            public void onItemSelected (AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position)
+                {
+
+                    case 1:
+                        updateSorter (ExtensionSortingType.PRICE_ASCENDING);
+                        break;
+
+                    case 2:
+                        updateSorter (ExtensionSortingType.PRICE_DESCENDING);
+                        break;
+
+                    case 3:
+                        updateSorter (ExtensionSortingType.ALPHABETIC_ASCENDING);
+                        break;
+
+                    case 4:
+                        updateSorter (ExtensionSortingType.ALPHABETIC_DESCENDING);
+                        break;
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected (AdapterView<?> parent) {
+
+                toastUser ("I'm a fluffy little puppy doge.", Toast.LENGTH_SHORT);
+
+            }
         });
 
         super.onStart ();
@@ -517,6 +564,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
 
         if (domainSearchedFor instanceof Domain) {
+
+            applicationExtensions = new ExtensionFilter (applicationExtensions, domainFilter).filter ();
 
             Log.d ("Bob", "domainzzzzzzzzzz");
 
@@ -897,7 +946,10 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             Log.d ("Bob", "Extensions have been updated");
 
             // Apply the filter
-            applicationExtensions = new DomainFilter (applicationExtensions, domainFilter).filter ();
+            applicationExtensions = new ExtensionFilter (applicationExtensions, domainFilter).filter ();
+
+            // Apply the sorter
+//            applicationExtensions = new ExtensionSorter (applicationExtensions, extensionSorter).sort ();
 
             if (domainSearchedFor instanceof Domain)
                 reinitializeExtensionsWithFoundDomain ();
