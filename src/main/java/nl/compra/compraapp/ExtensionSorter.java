@@ -36,7 +36,7 @@ public class ExtensionSorter {
             {
 
                 default:
-                    Log.d ("Bob", "Big problems in ExtensionSorter, we just hit the default case. #houstonWeHaveAProblem");
+                    Log.d ("Bob", "Big problems in ExtensionSorter, we just hit the default case. #houstonWeHaveAProblem ;___;");
                     break;
 
                 case PRICE_ASCENDING:
