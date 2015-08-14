@@ -50,12 +50,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     private static final StrikethroughSpan  STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
     private static final int                MAX_AMOUNT_OF_DOMAINS = 10;
+    private static final String             DEFAULT_EXTENSION = "com";
 
-    public static  Domain                  domainSearchedFor;
+    public static  Domain                   domainSearchedFor;
     private static  List <Extension>        applicationExtensions;
     private         String                  literalDomainSearchedFor;
     private         boolean                 domainSearchedForAvailabillity;
-    private ExtensionFilterType domainFilter;
+    private         ExtensionFilterType     domainFilter;
     private         ExtensionSortingType    extensionSorter;
 
     public MainActivity () {
@@ -171,21 +172,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         String domain = searchField.getText ().toString ();
 
         if ( ! domain.contains ("."))
-        {
-
-            notifyUser ("That's not a valid domain.");
-
-        }
-        else
-        {
+            domain += "." + DEFAULT_EXTENSION;
 
             clearDomains ();
             literalDomainSearchedFor = domain;
 
             Log.d ("Bob", "User is searching by the domain: " + literalDomainSearchedFor);
             new CheckIfDomainAvailable ().execute (domain);
-
-        }
 
 
     }

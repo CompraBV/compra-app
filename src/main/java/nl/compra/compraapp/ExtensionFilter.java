@@ -34,11 +34,17 @@ public class ExtensionFilter {
             Extension extensionIt = extensionIterator.next ();
 
             // Filter out the searched for domain to prevent xX_DupliCateZz_Xx
+            ////////////// THIS SHOULD EVENTUALLY BE TAKEN OVER BY ExtensionSorter //////////////
             if (MainActivity.domainSearchedFor instanceof Domain)
             {
 
                 if (extensionIt.getTld ().equals (MainActivity.domainSearchedFor.getLiteralExtension ()))
+                {
+
                     extensionIterator.remove ();
+                    continue;
+
+                }
 
             }
 
@@ -50,36 +56,43 @@ public class ExtensionFilter {
                     break;
 
                 case ALL:
+                    Log.d ("Bob", getClass ().toString () + " CASE: ALL");
                     // Nothing to filter
                     break;
 
                 case POPULAR:
+                    Log.d ("Bob", getClass ().toString () + " CASE: POPULAR");
                     if (extensionIt.getPopular () < 1)
                         extensionIterator.remove ();
                     break;
 
                 case NEW:
+                    Log.d ("Bob", getClass ().toString () + " CASE: NEW");
                     if (extensionIt.getNewDomain () < 1)
                         extensionIterator.remove ();
                     break;
 
                 case EUROPE:
+                    Log.d ("Bob", getClass ().toString () + " CASE: EUROPE");
                     if ( ! extensionIt.getRegion ().equals ("Europese"))
                         extensionIterator.remove ();
                     break;
 
                 case COUNTRIES:
+                    Log.d ("Bob", getClass ().toString () + " CASE: COUNTRIES");
                     if (extensionIt.getRegion ().equals ("Generieke") /*|| ! extensionIt.getRegion ().equals ("")*/)
                         extensionIterator.remove ();
                     break;
 
                 case COMMON:
+                    Log.d ("Bob", getClass ().toString () + " CASE: COMMON");
                     if ( ! extensionIt.getRegion ().equals ("Generieke"))
                         extensionIterator.remove ();
                     break;
 
                 case SPECIAL_OFFERS:
 
+                    Log.d ("Bob", getClass ().toString () + " CASE: SPECIAL_OFFERS");
                     Long now = System.currentTimeMillis ();
                     Date dateOfToday = new Date (now);
 
