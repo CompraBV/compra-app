@@ -19,6 +19,5 @@ public class UserManager {
     public static void logoutCurrentlySignedInUser () {
 
         currentlySignedInUser = null;
-
     }
 }
