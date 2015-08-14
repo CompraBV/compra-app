@@ -225,6 +225,22 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
+    private void destroyTheLastChildHidingUnderTheTable ()
+    {
+
+        TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
+        table.removeViewAt (getAmountOfChildrenHidingUnderTheTable ());
+
+    }
+
+    private int getAmountOfChildrenHidingUnderTheTable ()
+    {
+
+        TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
+        return table.getChildCount ();
+
+    }
+
     private void appendToTable (View newRow)
     {
 
@@ -900,8 +916,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                 List<Extension> localExtensionList;
                 localExtensionList = new ArrayList<Extension> ();
-//                for (int i = 0; i < jsonArray.length (); i++) {
-                for (int i = 0; i < AMOUNT_OF_DOMAINS_PER_BATCH; i++) {
+                for (int i = 0; i < jsonArray.length (); i++) {
+//                for (int i = 0; i < AMOUNT_OF_DOMAINS_PER_BATCH; i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
@@ -1030,10 +1046,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 int timesRan = 0;
 
                 Iterator <Extension> extensionIterator = applicationExtensions.iterator ();
-                while (extensionIterator.hasNext () && timesRan <= AMOUNT_OF_DOMAINS_PER_BATCH)
+                while (extensionIterator.hasNext () && timesRan++ <= AMOUNT_OF_DOMAINS_PER_BATCH)
                 {
-
-                    timesRan++;
 
                     Extension extensionIt = extensionIterator.next ();
 
