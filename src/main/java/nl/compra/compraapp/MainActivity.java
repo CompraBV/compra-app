@@ -478,11 +478,9 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         });
 
-        // Start CompraApiAdapter thread to load all domains
         new ExtensionInitializer ().execute ();
 
         // Creates the spinners
-
         Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource (this, R.array.catagories, android.R.layout.simple_spinner_item);
@@ -819,8 +817,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                     double specialPrice = domainObj.getDouble ("special_offer_price");
 
                     localExtensionList.add (new Extension (id, tld, pricePerYear, popular, newDomain, region, restriction, specialOfferDateBegin, specialOfferDateEnd, specialPrice));
-
-//                    localExtensionList.put (domain, price);
 
                 }
 
