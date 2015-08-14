@@ -14,8 +14,6 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.Iterator;
 
 
@@ -67,7 +65,7 @@ public class CartActivity extends ActionBarActivity {
             LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
             View newRow = newRow = layoutInflater.inflate (R.layout.domain_row_cart, null);
 
-            Button dpb       = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+            Button dpb       = (Button) newRow.findViewById (R.id.loadMoreExtensionsButton);
             ImageButton tc   = (ImageButton) newRow.findViewById (R.id.trashcanButton);
             TextView tv      = (TextView) newRow.findViewById (R.id.domeinRowText);
 

@@ -48,9 +48,9 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuItemClickListener {
 
-    private static final StrikethroughSpan  STRIKE_THROUGH_SPAN = new StrikethroughSpan ();
-    private static final int                MAX_AMOUNT_OF_DOMAINS = 10;
-    private static final String             DEFAULT_EXTENSION = "com";
+    private static final StrikethroughSpan  STRIKE_THROUGH_SPAN         = new StrikethroughSpan ();
+    private static final int                AMOUNT_OF_DOMAINS_PER_BATCH = 10;
+    private static final String             DEFAULT_EXTENSION           = "com";
 
     public static  Domain                   domainSearchedFor;
     private static  List <Extension>        applicationExtensions;
@@ -96,8 +96,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         // Now do the standard list
         if ( ! applicationExtensions.isEmpty ()) {
 
-
-
             // Iterates through all found domains
             Iterator<Extension> extensionListIterator = applicationExtensions.iterator ();
             while (extensionListIterator.hasNext ()) {
@@ -115,7 +113,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
                 domeinRowText.setText (extensionIt.getTld ());
 
-                Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+                Button domeinPriceButton = (Button) newRow.findViewById (R.id.loadMoreExtensionsButton);
                 String euroSign = "\u20ac";
 
                 Long now = System.currentTimeMillis ();
@@ -568,7 +566,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
             domeinRowText.setText (domainSearchedFor.getFullDomain ());
 
-            final Button domeinPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+            final Button domeinPriceButton = (Button) newRow.findViewById (R.id.loadMoreExtensionsButton);
 
             if (domainSearchedForAvailabillity) {
 
@@ -648,9 +646,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         if (!applicationExtensions.isEmpty () && literalDomainSearchedFor != null) {
 
+            int iteration = 0;
             // Iterates through all found domains
             Iterator<Extension> extensionListIterator = applicationExtensions.iterator ();
             while (extensionListIterator.hasNext ()) {
+
+                if (iteration++ >= 10)
+                    break;
 
                 // Get the next iteration
                 final Extension extensionIt = extensionListIterator.next ();
@@ -664,7 +666,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
                 domeinRowText.setText ((literalDomainSearchedFor.substring (0, literalDomainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
 
-                final Button domainPriceButton = (Button) newRow.findViewById (R.id.domeinRowOrderButton);
+                final Button domainPriceButton = (Button) newRow.findViewById (R.id.loadMoreExtensionsButton);
 
                 String euroSign = "\u20ac";
 
@@ -744,6 +746,12 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
             }
 
+            View addMoreRowsButtonRow = layoutInflater.inflate (R.layout.domain_append_row, null);
+            Button loadMoreShizButton = (Button) addMoreRowsButtonRow.findViewById (R.id.loadMoreExtensionsButton);
+            loadMoreShizButton.setText ("Meer extensies laden");
+
+            appendToTable (addMoreRowsButtonRow);
+
         } else {
 
             Log.d ("Bob", "domainList is very empty.");
@@ -800,7 +808,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 List<Extension> localExtensionList;
                 localExtensionList = new ArrayList<Extension> ();
 //                for (int i = 0; i < jsonArray.length (); i++) {
-                for (int i = 0; i < MAX_AMOUNT_OF_DOMAINS; i++) {
+                for (int i = 0; i < jsonArray.length (); i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
@@ -893,7 +901,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 List<Extension> localExtensionList;
                 localExtensionList = new ArrayList<Extension> ();
 //                for (int i = 0; i < jsonArray.length (); i++) {
-                for (int i = 0; i < MAX_AMOUNT_OF_DOMAINS; i++) {
+                for (int i = 0; i < AMOUNT_OF_DOMAINS_PER_BATCH; i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
@@ -1022,7 +1030,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 int timesRan = 0;
 
                 Iterator <Extension> extensionIterator = applicationExtensions.iterator ();
-                while (extensionIterator.hasNext () && timesRan <= MAX_AMOUNT_OF_DOMAINS)
+                while (extensionIterator.hasNext () && timesRan <= AMOUNT_OF_DOMAINS_PER_BATCH)
                 {
 
                     timesRan++;
@@ -1063,6 +1071,89 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         {
 
             reinitializeExtensionsWithFoundDomain ();
+
+        }
+
+    }
+
+    public class AppendExtensionsToList extends AsyncTask<String, String, String>
+    {
+
+        private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
+        private String jsonShit;
+
+        @Override
+        protected String doInBackground (String... params) {
+
+            try {
+
+                jsonShit = getUrlSource (URL);
+
+            } catch (IOException e) {
+
+                Log.d ("Bob", "jsonBuffer wilt niet getUrlSource() doen.");
+                e.printStackTrace ();
+
+            }
+
+            JSONObject jsonObject = null;
+            try {
+
+                jsonObject = new JSONObject (jsonShit);
+                JSONArray jsonArray = jsonObject.getJSONArray ("items");
+
+
+                // Exists for debugging purposes
+//                Log.d ("Bob", "Ik ga nu gezellig de hele jsonarray af");
+//                for (int i = 0; i < jsonArray.length (); i++)
+//                {
+//
+//                    Log.d ("Bob", jsonArray.get (i).toString ());
+//
+//                }
+
+                List<Extension> localExtensionList;
+                localExtensionList = new ArrayList<Extension> ();
+//                for (int i = 0; i < jsonArray.length (); i++) {
+                for (int i = 0; i < AMOUNT_OF_DOMAINS_PER_BATCH; i++) {
+
+                    // Create the JSON data object
+                    JSONObject domainObj = jsonArray.getJSONObject (i);
+
+                    int id = domainObj.getInt ("id");
+                    String tld = domainObj.getString ("tld");
+                    double pricePerYear = domainObj.getDouble ("price_per_year");
+                    int popular = domainObj.getInt ("popular");
+                    int newDomain = domainObj.getInt ("new");
+                    String region = domainObj.getString ("region");
+                    String restriction = domainObj.getString ("restriction");
+                    String specialOfferDateBegin = domainObj.getString ("special_offer_begin");
+                    String specialOfferDateEnd = domainObj.getString ("special_offer_end");
+                    double specialPrice = domainObj.getDouble ("special_offer_price");
+
+                    localExtensionList.add (new Extension (id, tld, pricePerYear, popular, newDomain, region, restriction, specialOfferDateBegin, specialOfferDateEnd, specialPrice));
+
+                }
+
+                Log.d ("Bob", "ExtensionInitializer successfully completed the domainList Map.");
+                applicationExtensions = localExtensionList;
+
+            } catch (JSONException e) {
+
+                Log.d ("Bob", "COMPRA API ADAPTER FAILED");
+                e.printStackTrace ();
+
+            }
+
+            return "Executed";
+
+        }
+
+        @Override
+        protected void onPostExecute (String string)
+        {
+
+//            doTheAppendingStuffs ();
 
         }
 
