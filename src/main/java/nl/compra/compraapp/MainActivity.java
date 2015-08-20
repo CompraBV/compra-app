@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     private static final int                AMOUNT_OF_DOMAINS_PER_BATCH = 10;
     private static final String             DEFAULT_EXTENSION           = "com";
 
-    public  static  Domain                   domainSearchedFor;
+    public  static  Domain                  domainSearchedFor;
     private static  List <Extension>        applicationExtensions;
     private         String                  literalDomainSearchedFor;
     private         boolean                 domainSearchedForAvailabillity;
