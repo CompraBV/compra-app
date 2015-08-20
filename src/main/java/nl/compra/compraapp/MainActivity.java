@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -52,12 +54,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     private static final int                AMOUNT_OF_DOMAINS_PER_BATCH = 10;
     private static final String             DEFAULT_EXTENSION           = "com";
 
-    public static  Domain                   domainSearchedFor;
+    public  static  Domain                   domainSearchedFor;
     private static  List <Extension>        applicationExtensions;
     private         String                  literalDomainSearchedFor;
     private         boolean                 domainSearchedForAvailabillity;
     private         ExtensionFilterType     domainFilter;
     private         ExtensionSortingType    extensionSorter;
+    private         int                     rowCount;
 
     public MainActivity () {
 
@@ -69,6 +72,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         domainFilter = ExtensionFilterType.ALL;
 
         applicationExtensions = new ArrayList<Extension> ();
+
+        rowCount = 0;
 
     }
 
@@ -187,6 +192,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         TableLayout tl = (TableLayout) findViewById (R.id.domainRowsTable);
         tl.removeAllViews ();
+        rowCount = 0;
 
     }
 
@@ -225,11 +231,12 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
-    private void destroyTheLastChildHidingUnderTheTable ()
+    private void killTheLastChildHidingUnderTheTable ()
     {
 
+        rowCount--;
         TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
-        table.removeViewAt (getAmountOfChildrenHidingUnderTheTable ());
+        table.removeViewAt (getAmountOfChildrenHidingUnderTheTable () - 1);
 
     }
 
@@ -244,6 +251,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     private void appendToTable (View newRow)
     {
 
+        rowCount++;
         TableLayout table = (TableLayout) findViewById (R.id.domainRowsTable);
         table.addView (newRow);
 
@@ -626,12 +634,12 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 //            String salePrice = euroSign + " " + extensionIt.getSpecialPrice () + "0";
 //
 //            domeinPriceButton.setText (salePrice);
-////                    domeinPriceButton.setText (originalPrice + " " + salePrice, TextView.BufferType.SPANNABLE);
+//              domeinPriceButton.setText (originalPrice + " " + salePrice, TextView.BufferType.SPANNABLE);
 //
-////                    Spannable spannable = (Spannable) domeinPriceButton.getText();
-////                    spannable.setSpan (STRIKE_THROUGH_SPAN, 0, originalPrice.length (), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//              Spannable spannable = (Spannable) domeinPriceButton.getText();
+//              spannable.setSpan (STRIKE_THROUGH_SPAN, 0, originalPrice.length (), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 //
-////                    domeinPriceButton.setPaintFlags (domeinPriceButton.getPaintFlags () | Paint.STRIKE_THRU_TEXT_FLAG); // this works but it strikes all through
+//              domeinPriceButton.setPaintFlags (domeinPriceButton.getPaintFlags () | Paint.STRIKE_THRU_TEXT_FLAG); // this works but it strikes all through
 //
 //        } else {
 //
@@ -762,15 +770,209 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
             }
 
-            View addMoreRowsButtonRow = layoutInflater.inflate (R.layout.domain_append_row, null);
-            Button loadMoreShizButton = (Button) addMoreRowsButtonRow.findViewById (R.id.loadMoreExtensionsButton);
-            loadMoreShizButton.setText ("Meer extensies laden");
-
-            appendToTable (addMoreRowsButtonRow);
+            addMoreDomainsButton ();
 
         } else {
 
             Log.d ("Bob", "domainList is very empty.");
+
+        }
+
+    }
+
+    private void addMoreDomainsButton ()
+    {
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+
+        View addMoreRowsButtonRow = layoutInflater.inflate (R.layout.domain_append_row, null);
+        Button loadMoreShizButton = (Button) addMoreRowsButtonRow.findViewById (R.id.loadMoreExtensionsButton);
+        loadMoreShizButton.setText ("Meer extensies laden");
+
+        loadMoreShizButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+                // load more domains
+                killTheLastChildHidingUnderTheTable ();
+                new batchOfFreshDomains ().execute ();
+                // do something
+
+            }
+        });
+
+        appendToTable (addMoreRowsButtonRow);
+
+    }
+
+    private void kaas ()
+    {
+
+        // kaas
+
+    }
+
+    public class batchOfFreshDomains extends AsyncTask<String, String, String>
+    {
+
+        private String url = "https://www.compra.nl/?c=api&m=checkDomain&domein=";
+        private String jsonBuffer;
+        private List<View> views = new ArrayList<View> ();
+
+        @Override
+        protected void onPreExecute ()
+        {
+
+            toastUser ("Bezig met het laden van meer domeinen...", Toast.LENGTH_LONG);
+
+        }
+
+        @Override
+        protected String doInBackground (String... params) {
+
+            for (int i = rowCount; i <= (rowCount + AMOUNT_OF_DOMAINS_PER_BATCH); i++) {
+
+                final Extension extensionIt = applicationExtensions.get (i);
+                LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+
+                try {
+
+                    jsonBuffer = getUrlSource (url + literalDomainSearchedFor + extensionIt.getTld ());
+
+                } catch (IOException e) {
+
+                    Log.d ("Bob", "jsonBuffer wilt niet getUrlSource() doen.");
+                    e.printStackTrace ();
+
+                }
+
+                JSONObject jsonObject = null;
+                try {
+
+                    jsonObject = new JSONObject (jsonBuffer);
+                    String availabillityCode = jsonObject.getString ("code");
+
+                    // Add a new domain_row
+                    View newRow = layoutInflater.inflate (R.layout.domain_row, null);
+
+                    // Attempt to change the text of the domain_row layout to the corresponding domain
+                    TextView domeinRowText = (TextView) newRow.findViewById (R.id.domeinRowText);
+                    domeinRowText.setText ((literalDomainSearchedFor.substring (0, literalDomainSearchedFor.indexOf ("."))) + "." + extensionIt.getTld ());
+
+                    final Button domainPriceButton = (Button) newRow.findViewById (R.id.loadMoreExtensionsButton);
+
+                    String euroSign = "\u20ac";
+
+                    Long now = System.currentTimeMillis ();
+                    Date dateOfToday = new Date (now);
+
+                    Date domainOfferDateBegin = null;
+                    Date domainOfferDateEnd = null;
+
+                    SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
+                    try {
+                        domainOfferDateBegin = sdf.parse (extensionIt.getSpecialOfferDateBegin ());
+                        domainOfferDateEnd = sdf.parse (extensionIt.getSpecialOfferDateEnd ());
+                    } catch (ParseException e) {
+                        e.printStackTrace ();
+                    }
+
+                    if (extensionIt.isAvailable ())
+                    {
+
+                        domainPriceButton.setOnClickListener (new View.OnClickListener () {
+                            @Override
+                            public void onClick (View v) {
+
+                                Log.d ("Bob", "CLICKEDEE CLOO");
+                                toastUser ("Domein is toegevoegd aan uw winkelwagen.", Toast.LENGTH_SHORT);
+
+                                CartManager.addToCart
+                                (
+                                    new Domain
+                                    (
+                                            domainSearchedFor.getLiteralDomain (),
+                                            extensionIt.getTld (),
+                                            extensionIt.getPricePerYear (),
+                                            true
+                                    )
+                                );
+
+                                domainPriceButton.setText ("Toegevoegd");
+
+                            }
+                        });
+
+                        if (dateOfToday.after (domainOfferDateBegin) && dateOfToday.before (domainOfferDateEnd)) {
+
+                            Log.d ("Bob", "THE DOMAIN " + extensionIt.getTld () + " IS ON SAAAAAAALE #STEAMSALE #PRAISEGABEN the new price is " + extensionIt.getSpecialPrice ());
+
+                            String originalPrice = euroSign + " " + extensionIt.getPricePerYear () + "0";
+                            String salePrice = euroSign + " " + extensionIt.getSpecialPrice () + "0";
+
+//                        domainPriceButton.setText (salePrice);
+                            domainPriceButton.setText (originalPrice + " " + salePrice, TextView.BufferType.SPANNABLE);
+
+                            //                    Spannable spannable = (Spannable) domainPriceButton.getText();
+                            //                    spannable.setSpan (STRIKE_THROUGH_SPAN, 0, originalPrice.length (), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            //                    domainPriceButton.setPaintFlags (domainPriceButton.getPaintFlags () | Paint.STRIKE_THRU_TEXT_FLAG); // this works but it strikes all through
+
+                        } else {
+
+                            if (CartManager.isInCart (domainSearchedFor.getLiteralDomain () + "." + extensionIt.getTld ()))
+                                domainPriceButton.setText ("Toegevoegd");
+                            else
+                                domainPriceButton.setText (euroSign + " " + extensionIt.getPricePerYear () + "0");
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        domainPriceButton.setText ("Bezet");
+
+                    }
+
+                    views.add (newRow);
+
+                } catch (JSONException e) {
+                    e.printStackTrace ();
+                }
+
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute (String string)
+        {
+
+            Iterator<View> viewIterator = views.iterator ();
+            while (viewIterator.hasNext ())
+            {
+
+                View viewIt = viewIterator.next ();
+                appendToTable (viewIt);
+
+            }
+
+            addMoreDomainsButton ();
+
+            final ScrollView scroller = (ScrollView) findViewById (R.id.scrollViewRowsThing);
+            scroller.post (new Runnable () {
+
+                @Override
+                public void run () {
+
+                    scroller.smoothScrollTo (0, scroller.getBottom () + 9999); // 9999 zal vast wel genoeg zijn
+
+                }
+
+            });
 
         }
 
@@ -1167,7 +1369,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         protected void onPostExecute (String string)
         {
 
-//            doTheAppendingStuffs ();
+            killTheLastChildHidingUnderTheTable ();
+//            for (int i = )
+//            {
+//
+//
+//
+//            }
 
         }
 
