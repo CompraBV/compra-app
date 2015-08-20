@@ -805,13 +805,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
-    private void kaas ()
-    {
-
-        // kaas
-
-    }
-
     public class batchOfFreshDomains extends AsyncTask<String, String, String>
     {
 
@@ -1287,95 +1280,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         {
 
             reinitializeExtensionsWithFoundDomain ();
-
-        }
-
-    }
-
-    public class AppendExtensionsToList extends AsyncTask<String, String, String>
-    {
-
-        private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
-        private String jsonShit;
-
-        @Override
-        protected String doInBackground (String... params) {
-
-            try {
-
-                jsonShit = getUrlSource (URL);
-
-            } catch (IOException e) {
-
-                Log.d ("Bob", "jsonBuffer wilt niet getUrlSource() doen.");
-                e.printStackTrace ();
-
-            }
-
-            JSONObject jsonObject = null;
-            try {
-
-                jsonObject = new JSONObject (jsonShit);
-                JSONArray jsonArray = jsonObject.getJSONArray ("items");
-
-
-                // Exists for debugging purposes
-//                Log.d ("Bob", "Ik ga nu gezellig de hele jsonarray af");
-//                for (int i = 0; i < jsonArray.length (); i++)
-//                {
-//
-//                    Log.d ("Bob", jsonArray.get (i).toString ());
-//
-//                }
-
-                List<Extension> localExtensionList;
-                localExtensionList = new ArrayList<Extension> ();
-//                for (int i = 0; i < jsonArray.length (); i++) {
-                for (int i = 0; i < AMOUNT_OF_DOMAINS_PER_BATCH; i++) {
-
-                    // Create the JSON data object
-                    JSONObject domainObj = jsonArray.getJSONObject (i);
-
-                    int id = domainObj.getInt ("id");
-                    String tld = domainObj.getString ("tld");
-                    double pricePerYear = domainObj.getDouble ("price_per_year");
-                    int popular = domainObj.getInt ("popular");
-                    int newDomain = domainObj.getInt ("new");
-                    String region = domainObj.getString ("region");
-                    String restriction = domainObj.getString ("restriction");
-                    String specialOfferDateBegin = domainObj.getString ("special_offer_begin");
-                    String specialOfferDateEnd = domainObj.getString ("special_offer_end");
-                    double specialPrice = domainObj.getDouble ("special_offer_price");
-
-                    localExtensionList.add (new Extension (id, tld, pricePerYear, popular, newDomain, region, restriction, specialOfferDateBegin, specialOfferDateEnd, specialPrice));
-
-                }
-
-                Log.d ("Bob", "ExtensionInitializer successfully completed the domainList Map.");
-                applicationExtensions = localExtensionList;
-
-            } catch (JSONException e) {
-
-                Log.d ("Bob", "COMPRA API ADAPTER FAILED");
-                e.printStackTrace ();
-
-            }
-
-            return "Executed";
-
-        }
-
-        @Override
-        protected void onPostExecute (String string)
-        {
-
-            killTheLastChildHidingUnderTheTable ();
-//            for (int i = )
-//            {
-//
-//
-//
-//            }
 
         }
 
