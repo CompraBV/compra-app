@@ -968,7 +968,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 @Override
                 public void run () {
 
-                    scroller.smoothScrollTo (0, scroller.getBottom () + 9999); // 9999 zal vast wel genoeg zijn
+                    scroller.smoothScrollTo (0, Integer.MAX_VALUE); // 2147 miljoen zal vast wel genoeg zijn
 
                 }
 
