@@ -55,12 +55,15 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     private static final String             DEFAULT_EXTENSION           = "com";
 
     public  static  Domain                  domainSearchedFor;
-    private static  List <Extension>        applicationExtensions;
+    private static  List<Extension>        applicationExtensions;
+    private static  ExtensionFilterType     domainFilter;
+    private static  ExtensionSortingType    extensionSorter;
     private         String                  literalDomainSearchedFor;
     private         boolean                 domainSearchedForAvailabillity;
-    private         ExtensionFilterType     domainFilter;
-    private         ExtensionSortingType    extensionSorter;
     private         int                     rowCount;
+
+    public static ExtensionFilterType   getExtensionFilterType ()   { return domainFilter; }
+    public static ExtensionSortingType  getExtensionSortingType ()  { return extensionSorter; }
 
     public MainActivity () {
 
@@ -69,7 +72,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
 
         // Default filter for all domains
-        domainFilter = ExtensionFilterType.ALL;
+        domainFilter    = ExtensionFilterType.ALL;
+        extensionSorter = ExtensionSortingType.NONE;
 
         applicationExtensions = new ArrayList<Extension> ();
 
@@ -379,22 +383,24 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             @Override
             public void onItemSelected (AdapterView<?> parent, View view, int position, long id) {
 
+                Log.d ("Bob", "USER CHANGED THE SORTER");
+
                 switch (position)
                 {
 
-                    case 1:
+                    case 0:
                         updateSorter (ExtensionSortingType.PRICE_ASCENDING);
                         break;
 
-                    case 2:
+                    case 1:
                         updateSorter (ExtensionSortingType.PRICE_DESCENDING);
                         break;
 
-                    case 3:
+                    case 2:
                         updateSorter (ExtensionSortingType.ALPHABETIC_ASCENDING);
                         break;
 
-                    case 4:
+                    case 3:
                         updateSorter (ExtensionSortingType.ALPHABETIC_DESCENDING);
                         break;
 
@@ -1157,7 +1163,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             applicationExtensions = new ExtensionFilter (applicationExtensions, domainFilter).filter ();
 
             // Apply the sorter
-//            applicationExtensions = new ExtensionSorter (applicationExtensions, extensionSorter).sort ();
+            applicationExtensions = new ExtensionSorter (applicationExtensions, extensionSorter).sort ();
 
             if (domainSearchedFor instanceof Domain)
                 reinitializeExtensionsWithFoundDomain ();

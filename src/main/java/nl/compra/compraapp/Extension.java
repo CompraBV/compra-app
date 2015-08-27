@@ -1,9 +1,12 @@
 package nl.compra.compraapp;
 
+import java.math.BigDecimal;
+import java.util.Comparator;
+
 /**
  * Created by Bob Desaunois on 3-7-2015.
  */
-public class Extension
+public class Extension implements Comparable<Extension>
 {
 
     private int id;
@@ -47,5 +50,41 @@ public class Extension
         this.specialPrice           = specialPrice;
 
     }
+
+    @Override
+    public int compareTo (Extension another)
+    {
+
+        BigDecimal compareQuantity = new BigDecimal (((Extension) another).getPricePerYear ());
+
+        BigDecimal moolah = new BigDecimal (pricePerYear);
+
+        if (MainActivity.getExtensionSortingType () == ExtensionSortingType.PRICE_ASCENDING)
+            return moolah.subtract (compareQuantity).intValue ();
+
+        else if (MainActivity.getExtensionSortingType () == ExtensionSortingType.ALPHABETIC_DESCENDING)
+            return compareQuantity.subtract (moolah).intValue ();
+
+        return 0;
+
+    }
+
+    public static Comparator<Extension> ExtensionNameComparator = new Comparator<Extension> () {
+        @Override
+        public int compare (Extension lhs, Extension rhs) {
+
+            String extensionName1 = lhs.getTld ().toUpperCase ();
+            String extensionName2 = rhs.getTld ().toUpperCase ();
+
+            if (MainActivity.getExtensionSortingType () == ExtensionSortingType.ALPHABETIC_ASCENDING)
+                return extensionName1.compareTo (extensionName2);
+
+            else if (MainActivity.getExtensionSortingType () == ExtensionSortingType.ALPHABETIC_DESCENDING)
+                return extensionName2.compareTo (extensionName1);
+
+            return 0;
+
+        }
+    };
 
 }
