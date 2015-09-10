@@ -9,7 +9,7 @@ import android.widget.ScrollView;
 public class AwesomeBobScroller extends ScrollView
 {
 
-    OnBottomReachedListener mListener;
+    private OnBottomReachedListener mListener;
 
     public AwesomeBobScroller (Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
