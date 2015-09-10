@@ -170,6 +170,8 @@ public class LoginActivity extends ActionBarActivity {
 
     private String getUrlSource (String url) throws IOException {
 
+        // This code was brutallity ripped from the intarwurbz
+
         URL custUrl = null;
         try {
             custUrl = new URL (url);
