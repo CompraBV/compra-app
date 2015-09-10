@@ -1,8 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".MainActivity"
-    android:theme="@style/AppTheme">
+    android:theme="@style/AppTheme"
+                android:id="@+id/">
 
 
     <RelativeLayout
@@ -12,7 +13,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="57dp">
+        android:layout_marginTop="57dp"
+        android:backgroundTint="#EEE">
 
         <EditText
             android:layout_width="wrap_content"
@@ -27,7 +29,7 @@
             android:hint="Domein zoeken"
             android:maxLength="25"
             android:lines="1"
-            android:singleLine="true"/>
+            android:singleLine="true"></EditText>
 
         <Button
             android:layout_width="40dp"
@@ -39,7 +41,7 @@
             android:layout_toEndOf="@+id/searchEditText" />
 
         <ImageButton
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="55dp"
             android:id="@+id/cartButton"
             android:text="CART"
@@ -48,7 +50,9 @@
             android:layout_toEndOf="@+id/domainSearchButton"
             android:focusable="true"
             android:src="@drawable/winkelwagen"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitEnd"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 
@@ -70,8 +74,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignBottom="@+id/imageView"
-        android:src="@drawable/ic_action_person"
-        />
+        android:src="@drawable/ic_action_person"></ImageButton>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -85,7 +88,9 @@
             android:layout_gravity="center"
             android:nestedScrollingEnabled="true"
             android:layout_below="@+id/sorteringen"
-            android:fillViewport="false">
+            android:fillViewport="false"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="false">
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -131,11 +136,12 @@
     </RelativeLayout>
 
     <ImageView
-        android:layout_width="57dp"
-        android:layout_height="57dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:id="@+id/imageView"
         android:background="@drawable/logo_128"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"/>
 
 </RelativeLayout>

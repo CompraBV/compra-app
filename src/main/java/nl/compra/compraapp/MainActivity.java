@@ -4,12 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
-import android.text.Layout;
 import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
@@ -66,10 +68,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     public static ExtensionSortingType  getExtensionSortingType ()  { return extensionSorter; }
 
     public MainActivity () {
-
-        // THIS EXISTS FOR TESTING PURPOSES
-        // TODO remove this when done testing
-        UserManager.setCurrentlySignedInUser (new User (11285, "Nathan", "Bastiaans", "n.bastiaans@compra.nl"));
 
         // Default filter for all domains
         domainFilter    = ExtensionFilterType.ALL;
@@ -420,6 +418,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService (Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
 
@@ -427,103 +432,112 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         setContentView (R.layout.activity_main);
 
+        if ( ! isOnline ())
+        {
 
-        //////////////////////////////////////////////////////////////
-        // Set listeners here that the layout can't for some reason //
-        //////////////////////////////////////////////////////////////
+            toastUser ("Sorry, but it seems you're not connected to the internet.", Toast.LENGTH_LONG);
+//            this.finish ();
 
-        Button b = (Button) findViewById (R.id.domainSearchButton);
-        b.setOnClickListener (new View.OnClickListener () {
-            @Override
-            public void onClick (View v) {
+        } else {
 
-                searchByDomain (v);
+            //////////////////////////////////////////////////////////////
+            // Set listeners here that the layout can't for some reason //
+            //////////////////////////////////////////////////////////////
 
-            }
-        });
+            Button b = (Button) findViewById (R.id.domainSearchButton);
+            b.setOnClickListener (new View.OnClickListener () {
+                @Override
+                public void onClick (View v) {
 
-        ImageButton loginActivityButton = (ImageButton) findViewById (R.id.loginActivityButton);
-        loginActivityButton.setOnClickListener (new View.OnClickListener () {
-            @Override
-            public void onClick (View v) {
+                    searchByDomain (v);
 
-                triggerLoginActivity (v);
+                }
+            });
 
-            }
-        });
+            ImageButton loginActivityButton = (ImageButton) findViewById (R.id.loginActivityButton);
+            loginActivityButton.setOnClickListener (new View.OnClickListener () {
+                @Override
+                public void onClick (View v) {
 
-        ImageButton menuButton = (ImageButton) findViewById (R.id.menuButton);
-        menuButton.setOnClickListener (new View.OnClickListener () {
-            @Override
-            public void onClick (View v) {
+                    triggerLoginActivity (v);
 
-               menuButtonTrigger (v);
+                }
+            });
 
-            }
-        });
+            ImageButton menuButton = (ImageButton) findViewById (R.id.menuButton);
+            menuButton.setOnClickListener (new View.OnClickListener () {
+                @Override
+                public void onClick (View v) {
 
-        ImageButton cartButton = (ImageButton) findViewById (R.id.cartButton);
-        cartButton.setOnClickListener (new View.OnClickListener () {
-            @Override
-            public void onClick (View v) {
+                    menuButtonTrigger (v);
 
-                cartButtonTrigger (v);
+                }
+            });
 
-            }
-        });
+            ImageButton cartButton = (ImageButton) findViewById (R.id.cartButton);
+            cartButton.setOnClickListener (new View.OnClickListener () {
+                @Override
+                public void onClick (View v) {
 
-        AwesomeBobScroller scrollView = (AwesomeBobScroller) findViewById (R.id.scrollViewRowsThing);
-        // STUFF AND THINGS
+                    cartButtonTrigger (v);
 
-        final EditText searchEditText = (EditText) findViewById (R.id.searchEditText);
+                }
+            });
 
-        searchEditText.addTextChangedListener (new TextWatcher () {
+            AwesomeBobScroller scrollView = (AwesomeBobScroller) findViewById (R.id.scrollViewRowsThing);
+            // STUFF AND THINGS
 
-            @Override
-            public void beforeTextChanged (CharSequence s, int start, int count, int after) {
+            final EditText searchEditText = (EditText) findViewById (R.id.searchEditText);
 
-            }
+            searchEditText.addTextChangedListener (new TextWatcher () {
 
-            @Override
-            public void onTextChanged (CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged (Editable s) {
-
-                if (searchEditText.getText ().toString ().equals ("")) {
-
-                    clearDomains ();
-                    domainSearchedFor = null;
-                    literalDomainSearchedFor = null;
-                    domainSearchedForAvailabillity = false;
-                    new ExtensionInitializer ().execute ();
+                @Override
+                public void beforeTextChanged (CharSequence s, int start, int count, int after) {
 
                 }
 
-            }
+                @Override
+                public void onTextChanged (CharSequence s, int start, int before, int count) {
 
-        });
+                }
 
-        new ExtensionInitializer ().execute ();
+                @Override
+                public void afterTextChanged (Editable s) {
 
-        // Creates the spinners
-        Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource (this, R.array.catagories, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerDomeinen.setAdapter (adapter);
+                    if (searchEditText.getText ().toString ().equals ("")) {
 
-        Spinner spinnerSorteringen = (Spinner) findViewById (R.id.sorteringen);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource (this, R.array.sort, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter2.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerSorteringen.setAdapter (adapter2);
+                        clearDomains ();
+                        domainSearchedFor = null;
+                        literalDomainSearchedFor = null;
+                        domainSearchedForAvailabillity = false;
+                        new ExtensionInitializer ().execute ();
+
+                    }
+
+                }
+
+            });
+
+            new ExtensionInitializer ().execute ();
+
+            // Creates the spinners
+            Spinner spinnerDomeinen = (Spinner) findViewById (R.id.domeinen);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource (this, R.array.catagories, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            spinnerDomeinen.setAdapter (adapter);
+
+            Spinner spinnerSorteringen = (Spinner) findViewById (R.id.sorteringen);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource (this, R.array.sort, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter2.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            spinnerSorteringen.setAdapter (adapter2);
+
+        }
 
     }
 
