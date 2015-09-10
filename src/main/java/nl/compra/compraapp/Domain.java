@@ -1,8 +1,5 @@
 package nl.compra.compraapp;
 
-/**
- * Created by Bob Desaunois on 16-7-2015.
- */
 public class Domain {
 
     private String  literalDomain;

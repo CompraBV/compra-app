@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import java.util.Iterator;
 
-
 public class CartActivity extends ActionBarActivity {
 
     private int iterations;

@@ -8,9 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by Bob Desaunois on 17-7-2015.
- */
 public class ExtensionFilter {
 
     List<Extension> extensionList;

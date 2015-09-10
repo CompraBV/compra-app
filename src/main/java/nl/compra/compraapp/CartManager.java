@@ -7,9 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created by Bob Desaunois on 24-7-2015.
- */
 public class CartManager {
 
     public static List<Domain> cart = new CopyOnWriteArrayList<Domain> ();

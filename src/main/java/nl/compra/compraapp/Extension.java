@@ -3,9 +3,6 @@ package nl.compra.compraapp;
 import java.math.BigDecimal;
 import java.util.Comparator;
 
-/**
- * Created by Bob Desaunois on 3-7-2015.
- */
 public class Extension implements Comparable<Extension>
 {
 

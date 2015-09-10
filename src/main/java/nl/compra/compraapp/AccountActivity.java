@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class AccountActivity extends ActionBarActivity {
 
     @Override

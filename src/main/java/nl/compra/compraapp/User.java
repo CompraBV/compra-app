@@ -1,8 +1,5 @@
 package nl.compra.compraapp;
 
-/**
- * Created by Bob Desaunois on 23-7-2015.
- */
 public class User {
 
     private int id;
