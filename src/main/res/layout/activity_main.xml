@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     tools:context=".MainActivity"
     android:theme="@style/AppTheme"
-                android:id="@+id/">
+    android:id="@+id/activity_main">
 
 
     <RelativeLayout
@@ -29,7 +29,9 @@
             android:hint="Domein zoeken"
             android:maxLength="25"
             android:lines="1"
-            android:singleLine="true"></EditText>
+            android:singleLine="true"
+            android:background="@drawable/input_compra"
+            android:padding="10dp"></EditText>
 
         <Button
             android:layout_width="40dp"
@@ -49,32 +51,33 @@
             android:layout_toRightOf="@+id/domainSearchButton"
             android:layout_toEndOf="@+id/domainSearchButton"
             android:focusable="true"
-            android:src="@drawable/winkelwagen"
+            android:src="@drawable/cart"
             android:scaleType="fitEnd"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentEnd="false"
             android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 
     <ImageButton
         android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:id="@+id/menuButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentStart="false"
         android:layout_alignBottom="@+id/imageView"
-        android:src="@drawable/ic_drawer" />
+        android:src="@drawable/ic_drawer"
+        android:layout_marginLeft="10dp"/>
 
     <ImageButton
         android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:id="@+id/loginActivityButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_action_person"
         android:layout_alignBottom="@+id/imageView"
-        android:src="@drawable/ic_action_person"></ImageButton>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="false"
+        android:layout_marginRight="10dp"></ImageButton>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -136,12 +139,12 @@
     </RelativeLayout>
 
     <ImageView
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/imageView"
         android:background="@drawable/logo_128"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="6dp"/>
+        android:layout_marginTop="9dp"/>
 
 </RelativeLayout>

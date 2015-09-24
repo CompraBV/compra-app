@@ -1,6 +1,7 @@
 package nl.compra.compraapp;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,10 +58,11 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     private static final String             DEFAULT_EXTENSION           = "com";
 
     public  static  Domain                  domainSearchedFor;
-    private static  List<Extension>        applicationExtensions;
+    private static  List<Extension>         applicationExtensions;
     private static  ExtensionFilterType     domainFilter;
     private static  ExtensionSortingType    extensionSorter;
     private         String                  literalDomainSearchedFor;
+    private         String                  plainDomainSearchedFor;
     private         boolean                 domainSearchedForAvailabillity;
     private         int                     rowCount;
 
@@ -181,6 +183,17 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
             clearDomains ();
             literalDomainSearchedFor = domain;
+
+
+        if (domain.contains ("."))
+        {
+
+            String[] parts = domain.split("\\.");
+            plainDomainSearchedFor = parts[0];
+            Log.d ("Bob", " @@@@@@@@@@@@@@@ PLAIN DOMAIN @@@@@@@@@@@@@@@ ");
+            Log.d ("Bob", plainDomainSearchedFor);
+
+        }
 
             Log.d ("Bob", "User is searching by the domain: " + literalDomainSearchedFor);
             new CheckIfDomainAvailable ().execute (domain);
@@ -572,7 +585,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     private String getUrlSource (String url) throws IOException {
 
-        // This code was brutallity ripped from the intarwurbz
+        // This code was brutality ripped from the intarwurbz
 
         URL custUrl = null;
         try {
@@ -838,6 +851,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         protected void onPreExecute ()
         {
 
+//            ObviousLoader.loadObviously ("Bezig met het laden van meer domeinen...");
             toastUser ("Bezig met het laden van meer domeinen...", Toast.LENGTH_LONG);
 
         }
@@ -852,7 +866,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                 try {
 
-                    jsonBuffer = getUrlSource (url + literalDomainSearchedFor + extensionIt.getTld ());
+                    jsonBuffer = getUrlSource (url + plainDomainSearchedFor + "." + extensionIt.getTld ());
 
                 } catch (IOException e) {
 
@@ -865,7 +879,13 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 try {
 
                     jsonObject = new JSONObject (jsonBuffer);
-                    String availabillityCode = jsonObject.getString ("code");
+                    String availabilityCode = jsonObject.getString ("code");
+
+                    Log.d ("Bob", " ########### INCOMING AVAILABILLITY CODE ################### ");
+                    Log.d ("Bob", extensionIt.getTld ());
+                    Log.d ("Bob", literalDomainSearchedFor);
+                    Log.d ("Bob", "" + rowCount);
+                    Log.d ("Bob", availabilityCode);
 
                     // Add a new domain_row
                     View newRow = layoutInflater.inflate (R.layout.domain_row, null);
@@ -892,7 +912,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                         e.printStackTrace ();
                     }
 
-                    if (extensionIt.isAvailable ())
+                    if (availabilityCode.equals ("210"))
                     {
 
                         domainPriceButton.setOnClickListener (new View.OnClickListener () {
@@ -990,6 +1010,12 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             });
 
         }
+
+    }
+
+    private void notSoObviousLoading () {
+
+
 
     }
 

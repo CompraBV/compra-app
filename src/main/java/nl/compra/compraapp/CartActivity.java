@@ -1,6 +1,8 @@
 package nl.compra.compraapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CartActivity extends ActionBarActivity {
 
@@ -55,7 +58,7 @@ public class CartActivity extends ActionBarActivity {
         cartTable.removeAllViews ();
 
         iterations = 0;
-        Iterator<Domain> cartIterator = CartManager.getCart ().iterator ();
+        final Iterator<Domain> cartIterator = CartManager.getCart ().iterator ();
         while (cartIterator.hasNext ())
         {
 
@@ -64,7 +67,7 @@ public class CartActivity extends ActionBarActivity {
             LayoutInflater layoutInflater = (LayoutInflater) getSystemService (Context.LAYOUT_INFLATER_SERVICE);
             View newRow = newRow = layoutInflater.inflate (R.layout.domain_row_cart, null);
 
-            Button dpb       = (Button) newRow.findViewById (R.id.loadMoreExtensionsButton);
+            TextView dpb     = (TextView) newRow.findViewById (R.id.loadMoreExtensionsButton);
             ImageButton tc   = (ImageButton) newRow.findViewById (R.id.trashcanButton);
             TextView tv      = (TextView) newRow.findViewById (R.id.domeinRowText);
 
@@ -93,6 +96,42 @@ public class CartActivity extends ActionBarActivity {
             iterations++;
 
         }
+
+        Button checkoutButton = (Button) findViewById (R.id.checkoutButton);
+        checkoutButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+                // User clicks the checkout button
+                StringBuilder sb = new StringBuilder ();
+                sb.append ("https://compra.nl/?c=api&m=readyToPay&id=9001&api_id=ABCabc123");
+
+                CopyOnWriteArrayList<Domain> cart = (CopyOnWriteArrayList<Domain>) CartManager.getCart ();
+
+                if ( ! cart.isEmpty ())
+                {
+
+                    Iterator<Domain> cartIterator = cart.iterator ();
+                    while (cartIterator.hasNext ()) {
+
+                        Domain domain = cartIterator.next ();
+                        sb.append ("&domains[]=" + domain.getFullDomain ());
+
+                    }
+
+                    String url = sb.toString ();
+                    Intent browserIntent = new Intent (Intent.ACTION_VIEW, Uri.parse (url));
+                    startActivity (browserIntent);
+
+                } else {
+
+                    toastUser ("Je winkelwagen is leeg.", Toast.LENGTH_SHORT);
+
+                }
+
+            }
+
+        });
 
     }
 
