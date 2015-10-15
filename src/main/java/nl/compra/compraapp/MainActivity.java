@@ -25,7 +25,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -274,7 +273,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     private void menuButtonTrigger (View v) {
 
-        PopupMenu popup = new PopupMenu(this, v);
+        PopupMenu popup = new PopupMenu (this, v);
         MenuInflater inflater = popup.getMenuInflater();
         popup.setOnMenuItemClickListener (this);
         inflater.inflate(R.menu.menu, popup.getMenu());
@@ -1013,6 +1012,12 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             });
 
         }
+
+    }
+
+    private void notSoObviousLoading () {
+
+
 
     }
 
