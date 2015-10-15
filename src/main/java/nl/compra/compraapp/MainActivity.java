@@ -1016,12 +1016,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
-    private void notSoObviousLoading () {
-
-
-
-    }
-
     public class ExtensionInitializer extends AsyncTask<String, String, String> {
 
         private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
