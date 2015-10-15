@@ -71,5 +71,6 @@
         android:id="@+id/imageView2"
         android:background="@drawable/logo_128"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
 </RelativeLayout>

@@ -322,6 +322,9 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         Toast toast = Toast.makeText (context, message, duration); // < Ignore this error, it's not an error.
 
+//        ObviousLoader ol = new ObviousLoader ();
+//        ol.loadObviously (message);
+
         toast.show ();
 
     }
@@ -467,7 +470,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 }
             });
 
-            ImageButton loginActivityButton = (ImageButton) findViewById (R.id.loginActivityButton);
+            Button loginActivityButton = (Button) findViewById (R.id.loginActivityButton);
             loginActivityButton.setOnClickListener (new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {
@@ -477,7 +480,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 }
             });
 
-            ImageButton menuButton = (ImageButton) findViewById (R.id.menuButton);
+            Button menuButton = (Button) findViewById (R.id.menuButton);
             menuButton.setOnClickListener (new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {
@@ -487,7 +490,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 }
             });
 
-            ImageButton cartButton = (ImageButton) findViewById (R.id.cartButton);
+            Button cartButton = (Button) findViewById (R.id.cartButton);
             cartButton.setOnClickListener (new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {

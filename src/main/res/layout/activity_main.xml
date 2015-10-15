@@ -42,42 +42,48 @@
             android:layout_toRightOf="@+id/searchEditText"
             android:layout_toEndOf="@+id/searchEditText" />
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="55dp"
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/cartButton"
-            android:text="CART"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/domainSearchButton"
             android:layout_toEndOf="@+id/domainSearchButton"
             android:focusable="true"
             android:src="@drawable/cart"
-            android:scaleType="fitEnd"
+            android:scaleType="fitCenter"
             android:layout_alignParentEnd="false"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="false"
+            android:background="@drawable/cart"
+            android:layout_toRightOf="@+id/domainSearchButton"
+            android:layout_marginLeft=" 20dp"/>
 
     </RelativeLayout>
 
-    <ImageButton
-        android:layout_width="60dp"
-        android:layout_height="80dp"
+    <Button
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/menuButton"
+        android:src="@drawable/bars"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="false"
-        android:layout_alignBottom="@+id/imageView"
-        android:src="@drawable/ic_drawer"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/loginActivityButton"
+        android:background="@drawable/bars"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"/>
 
-    <ImageButton
-        android:layout_width="60dp"
-        android:layout_height="80dp"
+    <Button
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/loginActivityButton"
         android:src="@drawable/ic_action_person"
-        android:layout_alignBottom="@+id/imageView"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="false"
-        android:layout_marginRight="10dp"></ImageButton>
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/imageView"
+        android:background="@drawable/person"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"></Button>
 
     <RelativeLayout
         android:layout_width="match_parent"

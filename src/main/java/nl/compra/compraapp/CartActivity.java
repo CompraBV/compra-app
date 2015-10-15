@@ -104,7 +104,7 @@ public class CartActivity extends ActionBarActivity {
 
                 // User clicks the checkout button
                 StringBuilder sb = new StringBuilder ();
-                sb.append ("https://compra.nl/?c=api&m=readyToPay&id=9001&api_id=ABCabc123");
+                sb.append ("https://compra.nl/?c=api&m=readyToPay&id=" + UserManager.getCurrentlySignedInUser ().getId () + "&api_id=" + UserManager.getApiID ());
 
                 CopyOnWriteArrayList<Domain> cart = (CopyOnWriteArrayList<Domain>) CartManager.getCart ();
 

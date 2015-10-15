@@ -200,6 +200,8 @@ public class LoginActivity extends ActionBarActivity {
 
             url = "https://www.compra.nl/?c=api&m=login&email=" + params[0] + "&password=" + params[1];
 
+            String loginUrl = "";
+
             Log.d ("Bob", "Attempted login");
 
             try {
@@ -224,10 +226,12 @@ public class LoginActivity extends ActionBarActivity {
                         String firstname = jsonObject.getString ("firstname");
                         String lastname = jsonObject.getString ("lastname");
                         String email = jsonObject.getString ("email");
+                        String apiID = jsonObject.getString ("api_id");
 
                         User user = new User (id, firstname, lastname, email);
 
                         UserManager.setCurrentlySignedInUser (user);
+                        UserManager.setApiID (apiID);
 
                         Log.d ("Bob", "True login");
 
