@@ -1139,20 +1139,9 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 jsonObject = new JSONObject (jsonShit);
                 JSONArray jsonArray = jsonObject.getJSONArray ("items");
 
-
-                // Exists for debugging purposes
-//                Log.d ("Bob", "Ik ga nu gezellig de hele jsonarray af");
-//                for (int i = 0; i < jsonArray.length (); i++)
-//                {
-//
-//                    Log.d ("Bob", jsonArray.get (i).toString ());
-//
-//                }
-
                 List<Extension> localExtensionList;
                 localExtensionList = new ArrayList<Extension> ();
                 for (int i = 0; i < jsonArray.length (); i++) {
-//                for (int i = 0; i < AMOUNT_OF_DOMAINS_PER_BATCH; i++) {
 
                     // Create the JSON data object
                     JSONObject domainObj = jsonArray.getJSONObject (i);
@@ -1169,8 +1158,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                     double specialPrice = domainObj.getDouble ("special_offer_price");
 
                     localExtensionList.add (new Extension (id, tld, pricePerYear, popular, newDomain, region, restriction, specialOfferDateBegin, specialOfferDateEnd, specialPrice));
-
-//                    localExtensionList.put (domain, price);
 
                 }
 
