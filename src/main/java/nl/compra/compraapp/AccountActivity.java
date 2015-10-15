@@ -1,16 +1,20 @@
 package nl.compra.compraapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AccountActivity extends ActionBarActivity {
+public class AccountActivity extends ActionBarActivity implements PopupMenu.OnMenuItemClickListener {
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -28,6 +32,26 @@ public class AccountActivity extends ActionBarActivity {
         achternaamTV.setText (currentlySignedInUser.getLastname ());
         emailAdresTV.setText (currentlySignedInUser.getEmail ());
 
+        Button loginActivityButton = (Button) findViewById (R.id.loginActivityButton);
+        loginActivityButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+                triggerLoginActivity (v);
+
+            }
+        });
+
+        Button menuButton = (Button) findViewById (R.id.menuButton);
+        menuButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+
+                menuButtonTrigger (v);
+
+            }
+        });
+
         Button logoutButton = (Button) findViewById (R.id.logoutButton);
         logoutButton.setOnClickListener (new View.OnClickListener () {
             @Override
@@ -39,6 +63,59 @@ public class AccountActivity extends ActionBarActivity {
 
             }
         });
+
+    }
+
+    private void menuButtonTrigger (View v) {
+
+        PopupMenu popup = new PopupMenu (this, v);
+        MenuInflater inflater = popup.getMenuInflater ();
+        popup.setOnMenuItemClickListener (this);
+        inflater.inflate (R.menu.menu, popup.getMenu ());
+        popup.show ();
+
+    }
+
+    public void triggerLoginActivity (View view)
+    {
+
+        if (UserManager.getCurrentlySignedInUser () instanceof User)
+        {
+
+            Intent accountIntent = new Intent (this, AccountActivity.class);
+            startActivity (accountIntent);
+
+        } else {
+
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            startActivity (loginIntent);
+
+        }
+
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item)
+    {
+
+        switch (item.getItemId())
+        {
+
+            case R.id.optionContact:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse ("http://www.compra.nl/contact"));
+                startActivity(browserIntent);
+                return true;
+
+            case R.id.optionOfferte:
+                Intent browserIntent2 = new Intent(Intent.ACTION_VIEW, Uri.parse ("http://www.compra.nl/#offerte"));
+                startActivity(browserIntent2);
+                return true;
+
+            default:
+                return false;
+
+        }
 
     }
 

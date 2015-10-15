@@ -33,13 +33,15 @@
         >
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Logout"
+            android:text="Log uit"
             android:id="@+id/logoutButton"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="23dp"/>
+            android:layout_marginBottom="0dp"
+            android:textColor="#FFF"
+            android:background="@drawable/button_blue"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -48,7 +50,7 @@
             android:id="@+id/textView"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="74dp"/>
+            android:layout_marginTop="150dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -92,5 +94,61 @@
             android:id="@+id/emailAdresTextView"
             android:layout_below="@+id/textView5"
             android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/menuButton"
+            android:src="@drawable/bars"
+            android:background="@drawable/bars"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="10dp"/>
+
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/loginActivityButton"
+            android:src="@drawable/ic_action_person"
+            android:background="@drawable/person"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/imageView5"
+            android:background="@drawable/logo_128"
+            android:paddingBottom="25dp"
+            android:padding="25dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="69dp"
+            android:background="#CCCCCC"
+            android:backgroundTint="#EEE"
+            android:id="@+id/relativeLayout3"
+            android:layout_below="@+id/menuButton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mijn Account"
+                android:id="@+id/textView6"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:backgroundTint="#EEE"/>
+        </RelativeLayout>
+
     </RelativeLayout>
 </RelativeLayout>

@@ -289,7 +289,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
-//    @Override
+    @Override
     public boolean onMenuItemClick(MenuItem item)
     {
 
@@ -587,7 +587,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     private String getUrlSource (String url) throws IOException {
 
-        // This code was brutality ripped from the intarwurbz
+        // This code was brutality ripped from the intarwubz
 
         URL custUrl = null;
         try {
@@ -692,7 +692,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             else
             {
 
-                domeinPriceButton.setText ("BEZET");
+                domeinPriceButton.setText ("BEZETTTTTTT");
 
             }
 //
@@ -705,7 +705,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
         }
 
-        if (!applicationExtensions.isEmpty () && literalDomainSearchedFor != null) {
+        if ( ! applicationExtensions.isEmpty () && literalDomainSearchedFor != null) {
 
             int iteration = 0;
             // Iterates through all found domains
@@ -744,6 +744,9 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                 } catch (ParseException e) {
                     e.printStackTrace ();
                 }
+
+                Log.d ("Bob", "###################### DIS NIGGA IS B3Z3T ??? ####################");
+                Log.d ("Bob", extensionIt.code + "");
 
                 if (extensionIt.isAvailable ())
                 {
@@ -1180,13 +1183,19 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             Log.d ("Bob", "Extensions have been updated");
 
             // Apply the filter
+            // @todo When you search for a domain and then apply the filter everything is "Bezet", this is because the CheckIfDomainIsAvailable is never instantiated.
             applicationExtensions = new ExtensionFilter (applicationExtensions, domainFilter).filter ();
 
             // Apply the sorter
             applicationExtensions = new ExtensionSorter (applicationExtensions, extensionSorter).sort ();
 
             if (domainSearchedFor instanceof Domain)
+            {
+
+//                new CheckIfDomainAvailable ().execute ();
                 reinitializeExtensionsWithFoundDomain ();
+
+            }
             else
             {
 
@@ -1276,6 +1285,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
                         jsonBuffer = getUrlSource (url + domainWithoutExtension + "." + extensionIt.getTld ());
                         jsonObject = new JSONObject (jsonBuffer);
+                        Log.d ("DOMAIN IN QUESTION: " + domainWithoutExtension + "." + extensionIt.getTld (), "Bob");
+                        Log.d ("AND IT'S TRUSTY CODE: " + jsonObject.getString ("code").toString (), "Bob");
                         boolean availabillity = jsonObject.getString ("code").equals ("210") ? true : false;
                         extensionIt.setAvailable (availabillity);
 

@@ -208,7 +208,27 @@ public class CartActivity extends ActionBarActivity implements PopupMenu.OnMenuI
     }
 
     @Override
-    public boolean onMenuItemClick (MenuItem item) {
-        return false;
+    public boolean onMenuItemClick(MenuItem item)
+    {
+
+        switch (item.getItemId())
+        {
+
+            case R.id.optionContact:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse ("http://www.compra.nl/contact"));
+                startActivity(browserIntent);
+                return true;
+
+            case R.id.optionOfferte:
+                Intent browserIntent2 = new Intent(Intent.ACTION_VIEW, Uri.parse ("http://www.compra.nl/#offerte"));
+                startActivity(browserIntent2);
+                return true;
+
+            default:
+                return false;
+
+        }
+
     }
+
 }

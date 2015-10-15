@@ -31,7 +31,7 @@ public class ExtensionFilter {
             Extension extensionIt = extensionIterator.next ();
 
             // Filter out the searched for domain to prevent xX_DupliCateZz_Xx
-            ////////////// THIS SHOULD EVENTUALLY BE TAKEN OVER BY ExtensionSorter (the sorter should sort the searched for domain to the very top) //////////////
+            ////////////// @todo THIS SHOULD EVENTUALLY BE TAKEN OVER BY ExtensionSorter (the sorter should sort the searched for domain to the very top) //////////////
             if (MainActivity.domainSearchedFor instanceof Domain)
             {
 

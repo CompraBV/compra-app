@@ -6,6 +6,8 @@ import java.util.Comparator;
 public class Extension implements Comparable<Extension>
 {
 
+    public String   code;
+
     private int id;
     private String  tld;
     private double  pricePerYear;
