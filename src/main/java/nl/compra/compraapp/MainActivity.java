@@ -11,7 +11,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v7.app.ActionBarActivity;
+import android.test.suitebuilder.annotation.Suppress;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
@@ -319,7 +321,17 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         Context context = getApplicationContext ();
         int duration = length;
 
-        Toast toast = Toast.makeText (context, message, duration); // < Ignore this error, it's not an error.
+        /*
+            This annotation is here because the Toast.makeText call throws an error which doesn't halt the system
+            and thus causes no harm or acts as any form of obstruction.
+            It throws an error stating that "duration" shouldn't be a final int but rather either Toast.SHORT or Toast.LONG.
+            In the end this is exactly what it gets, a constant; a final int.
+            The compiler/api/system just doesn't realize that it's demanding something that is is already having.
+
+            A very weird and silly yet ultimately intrusive error, therefore it is supressed.
+         */
+        @SuppressWarnings ("all")
+        Toast toast = Toast.makeText (context, message, duration);
 
 //        ObviousLoader ol = new ObviousLoader ();
 //        ol.loadObviously (message);
@@ -692,7 +704,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             else
             {
 
-                domeinPriceButton.setText ("BEZETTTTTTT");
+                domeinPriceButton.setText ("Bezet");
 
             }
 //
@@ -745,8 +757,8 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
                     e.printStackTrace ();
                 }
 
-                Log.d ("Bob", "###################### DIS NIGGA IS B3Z3T ??? ####################");
-                Log.d ("Bob", extensionIt.code + "");
+                Log.d ("Bob", "###################### DIS NIGGA IS FR33 ??? ####################");
+                Log.d ("Bob", extensionIt.isAvailable () + "");
 
                 if (extensionIt.isAvailable ())
                 {
@@ -1018,12 +1030,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
 
     }
 
-    private void notSoObviousLoading () {
-
-
-
-    }
-
     public class ExtensionInitializer extends AsyncTask<String, String, String> {
 
         private final String URL = "https://www.compra.nl/?c=api&m=getExtensions";
@@ -1183,7 +1189,6 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             Log.d ("Bob", "Extensions have been updated");
 
             // Apply the filter
-            // @todo When you search for a domain and then apply the filter everything is "Bezet", this is because the CheckIfDomainIsAvailable is never instantiated.
             applicationExtensions = new ExtensionFilter (applicationExtensions, domainFilter).filter ();
 
             // Apply the sorter
@@ -1192,17 +1197,114 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
             if (domainSearchedFor instanceof Domain)
             {
 
-//                new CheckIfDomainAvailable ().execute ();
-                reinitializeExtensionsWithFoundDomain ();
+                new CheckIfDomainsInListAreStillAvailable ().execute (plainDomainSearchedFor);
+//                reinitializeExtensionsWithFoundDomain (); // This is already executed when CheckIfDomainAvailable has finished
 
             }
             else
             {
 
+                // This does /NOT/ trigger the error addressed in the above "to do".
                 clearDomains ();
                 initializeExtensions ();
 
             }
+
+        }
+
+    }
+
+    public class CheckIfDomainsInListAreStillAvailable extends AsyncTask<String, String, String> {
+
+        private String url = "https://www.compra.nl/?c=api&m=checkDomain&domein=";
+        private String jsonBuffer;
+
+        @Override
+        protected void onPreExecute ()
+        {
+
+            Log.d ("Bob", "This is CheckIfDomainsInListAreStillAvailable and if you see this I actually tried to start.");
+
+        }
+
+        private String getUrlSource (String url) throws IOException {
+
+            // This code was brutality ripped from the intarwubz
+
+            URL custUrl = null;
+            try {
+                custUrl = new URL (url);
+            } catch (MalformedURLException e) {
+                e.printStackTrace ();
+            }
+            URLConnection yc = custUrl.openConnection ();
+            BufferedReader in = new BufferedReader (new InputStreamReader (yc.getInputStream (), "UTF-8"));
+            String inputLine;
+            StringBuilder a = new StringBuilder ();
+            while ((inputLine = in.readLine ()) != null)
+                a.append (inputLine);
+            in.close ();
+
+            return a.toString ();
+
+        }
+
+
+        @Override
+        protected String doInBackground (String... params) {
+
+            int timesRan = 0;
+
+            Iterator<Extension> extensionIterator = applicationExtensions.iterator ();
+
+            while (extensionIterator.hasNext () && timesRan++ <= AMOUNT_OF_DOMAINS_PER_BATCH)
+            {
+
+                Extension extensionIt = extensionIterator.next ();
+
+                JSONObject jsonObject = null;
+                try {
+
+                    String domainWithoutExtension = params[0];
+
+                    jsonBuffer = getUrlSource (url + domainWithoutExtension + "." + extensionIt.getTld ());
+
+                    try {
+                        jsonObject = new JSONObject (jsonBuffer);
+                    } catch (JSONException e) {
+                        Log.d ("Bob", "Kak");
+                        e.printStackTrace ();
+                    }
+
+                    Log.d ("DOMAIN IN QUESTION: " + domainWithoutExtension + "." + extensionIt.getTld (), "Bob");
+                    Log.d ("AND IT'S TRUSTY CODE: " + jsonObject.getString ("code").toString (), "Bob");
+                    boolean availabillity = jsonObject.getString ("code").equals ("210") ? true : false;
+                    extensionIt.setAvailable (availabillity);
+
+                    Log.d ("Bob", "the domain " + domainWithoutExtension + " with extension " + extensionIt.getTld () + " has code " + jsonObject.getString ("code") + "!");
+
+                } catch (IOException e) {
+
+                    Log.d ("Bob", "jsonBuffer wilt niet getUrlSource() doen.");
+                    e.printStackTrace ();
+
+                } catch (JSONException e) {
+                    Log.d ("Bob", "Kakk");
+                    e.printStackTrace ();
+                }
+
+            }
+
+            return "donezo";
+
+        }
+
+        @Override
+        protected void onPostExecute (String string)
+        {
+
+            Log.d ("Bob", "Ja toch CheckIfDomainsAreStillAvailable is klaar rustaaaaaaaaagh");
+            reinitializeExtensionsWithFoundDomain ();
 
         }
 
@@ -1316,6 +1418,7 @@ public class MainActivity extends ActionBarActivity implements PopupMenu.OnMenuI
         protected void onPostExecute (String string)
         {
 
+            Log.d ("Bob", "All domains were checked");
             reinitializeExtensionsWithFoundDomain ();
 
         }

@@ -26,7 +26,7 @@ public class ExtensionSorter {
     public List<Extension> sort ()
     {
 
-        Log.d ("Bob", "Cheeeeeeeeeeeeeeeese " + sortingType);
+        Log.d ("Bob", "SORTS, SORTS, SORTS SORTS SORTS SORTS, SORTS, " + sortingType);
 
         int currentIndex = 0;
         Iterator<Extension> extensionIterator = extensionList.iterator ();
